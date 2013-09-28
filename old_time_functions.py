@@ -5,7 +5,7 @@ from copy import deepcopy
 def calc_time_spent(start, end):
     """Calculate the number of hours between two datetime objects."""
     time_diff = round((end - start).seconds / 60. / 60., 1)
-    return timediff
+    return time_diff
 
 
 def print_sheet (begin_time, current_proj, time_dict):
@@ -26,6 +26,7 @@ def print_sheet (begin_time, current_proj, time_dict):
     if temp_time_dict[current_proj] > 20:
         del temp_time_dict[current_proj]
     
+    # Print current timesheet
     pprint(temp_time_dict, width=5)
 
 
@@ -41,7 +42,7 @@ def new_entry (begin_time, current_proj, time_dict, recent_projs):
     # Ask user what they want to work on next
     print "\nWhat project are you starting to work on now? (Enter number)"
     for num, val in enumerate(temp_recent_projs):
-        print "{0}) {1}".format()
+        print "{0}) {1}".format(num + 1, val)
     
     # If the user is starting on a new project, ask for its name
     new_proj = temp_recent_projs[int(raw_input()) - 1]
@@ -96,6 +97,7 @@ def endofday (begin_time, current_proj, time_dict):
     return True
 
 
+# Determine user's first project for the day
 print "\nGood morning!"
 begin_time = datetime.strptime(raw_input("\nWhat time did you come in today? "), "%H:%M")
 current_proj = raw_input("\nWhat project did you work on first? ")
@@ -105,17 +107,17 @@ time_dict = {}
 recent_projs = [current_proj]
 
 # Keep the program running until the user leaves for the day
-isitover = False
-while isitover == False:
-    whichfunction = raw_input("""
+is_it_over = False
+while is_it_over == False:
+    which_function = raw_input("""
 What would you like to do? (Enter number)
 1) Start work on a new project
 2) Print current timesheet
 3) Leave for the day
 """)
-    if whichfunction == '1':
+    if which_function == '1':
         begin_time, current_proj, time_dict, recent_projs = new_entry(begin_time, current_proj, time_dict, recent_projs)
-    elif whichfunction == '2':
-        printsheet(begin_time, current_proj, time_dict)
-    elif whichfunction == '3':
-        isitover = endofday(begin_time, current_proj, time_dict)
+    elif which_function == '2':
+        print_sheet(begin_time, current_proj, time_dict)
+    elif which_function == '3':
+        is_it_over = endofday(begin_time, current_proj, time_dict)
