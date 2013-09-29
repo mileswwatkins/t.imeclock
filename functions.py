@@ -11,7 +11,7 @@ class User(object):
 
         for proj in self.proj_list:
             if proj.end_time != None:
-                proj.end(end_time=switch_datetime)
+                proj.end_time = switch_datetime
                 break
 
         proj_already_used = any(proj.proj_name == proj_name for
@@ -19,13 +19,13 @@ class User(object):
         
         if not proj_already_used:
             new_proj = Project(proj_name)
-            new_proj.start(start_time=switch_datetime)
+            new_proj.start_time = switch_datetime
             self.proj_list.append(new_proj)
         
         elif proj_already_used:
             for proj in self.proj_list:
                 if proj.proj_name == proj_name:
-                    proj.start(start_time=switch_datetime)
+                    proj.start_time = switch_datetime
                     break
 
 
@@ -34,13 +34,16 @@ class Project(object):
         self.proj_name = proj_name
         self.start_time = None
         self.end_time = None
-        self.total_time = 0.
+        self.total_time = 0
 
-    def start(self, start_time):
-        pass
+    def add_time_to_total(self):
+        """Calculate time (in minutes) between start_time and end_time,
+        and add that to the total_time. Reset start_time and end_time
+        to None.
+        """
+        time_diff = self.end_time - self.start_time
+        time_diff_mins = time_diff.seconds / 60
+        self.total_time = self.total_time + time_diff_mins
 
-    def end(self, end_time):
-        pass
-
-    def add_to_total(self, start_time, end_time):
-        pass
+        self.start_time = None
+        self.end_time = None
