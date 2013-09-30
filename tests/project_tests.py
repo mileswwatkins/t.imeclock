@@ -1,9 +1,6 @@
 import unittest
-import os
-import sys
 from datetime import datetime
 
-sys.path.append(os.path.join('..', 'src'))
 from functions import User, Project
 
 
@@ -38,3 +35,6 @@ class ProjectTests(unittest.TestCase):
     def test_start_time_cleared_after_add_time_to_total(self):
         self.started_and_ended.add_time_to_total()
         self.assertEqual(self.started_and_ended.start_time, None)
+
+    def test_one(self):
+        self.assertEqual(1, 1)

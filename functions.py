@@ -3,8 +3,8 @@ from datetime import datetime
 
 class User(object):
     def __init__(self, user_name):
-        self.user_name = user_name
-        self.proj_list = []
+        self.user_name = user_name # could be simply name, we know we're talking about a user already
+        self.proj_list = [] # could be just projects, no need to indicate it's a list as that implementation could change
 
     def switch_proj(self, proj_name, switch_time):
         """End the previous project, then start timing new project"""
@@ -32,11 +32,12 @@ class User(object):
 
 class Project(object):
     def __init__(self, proj_name):
-        self.proj_name = proj_name
-        self.start_time = None
+        self.proj_name = proj_name # call it simply name
+        self.start_time = None # start might be passed to the constructor
         self.end_time = None
         self.total_time = 0
 
+    # maybe just add_time
     def add_time_to_total(self):
         """Calculate time (in minutes) between start_time and end_time,
         and add that to the total_time. Reset start_time and end_time
