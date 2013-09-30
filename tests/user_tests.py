@@ -1,9 +1,6 @@
 import unittest
-import os
-import sys
 from datetime import datetime
 
-sys.path.append(os.path.join('..', 'src'))
 from functions import User, Project
 
 
