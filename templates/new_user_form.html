@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Flask App</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    </head>
+
+    <body>
+        <form action="{{ url_for('new_user_form') }}" method=post>
+            <dl>
+                <dt>Username:</dt>
+                <dd><input type=text name=username></dd>
+                <dd><input type=submit value=Create User></dd>
+            </dl>
+        </form>
+    </body>
+    
+</html>
