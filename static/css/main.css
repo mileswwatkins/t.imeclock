@@ -3,15 +3,16 @@ body {
   padding: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   color: #444;
+  background-color: #F8F8F8;
 }
  
 /*
- * Create dark grey header with a white logo
+ * Create orange header with a black logo
  */
   
 header {
-  background-color: #2B2B2B;
-  height: 35px;
+  background-color: #FF9900;
+  height: 32px;
   width: 100%;
   opacity: .9;
   margin-bottom: 10px;
@@ -20,13 +21,13 @@ header {
 header h1.logo {
   margin: 0;
   font-size: 1.7em;
-  color: #fff;
+  color: #000000;
   text-transform: uppercase;
   float: left;
 }
  
 header h1.logo:hover {
-  color: #fff;
+  color: #000000;
   text-decoration: none;
 }
  
@@ -48,7 +49,7 @@ header h1.logo:hover {
 }
 
 .menu li a {
-  color: #999;
+  color: #000000;
   text-decoration: none;
 }
 
@@ -57,7 +58,7 @@ header h1.logo:hover {
  */
   
 .container {
-  width: 940px;
+  width: 960px;
   margin: 0 auto;
 }
  

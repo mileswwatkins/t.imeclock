@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.name.label }} {{ form.name(size=20) }}
+        {{ form.password.label }} {{ form.password(size=20) }}
+
+        {% if form.name.errors %}
+            <ul class="errors">{% for error in form.name.errors %}
+                <li> {{ error }} </li>
+            {% endfor %}</ul>
+        {% endif %}
+
+        <input type="submit" value="Sign me up!">
+    </form>
+
+    <form action="/register">
+        <input type="submit" value="Don't have a T.imeclock account yet?">
+    </form>
+{% endblock %}
