@@ -8,10 +8,15 @@
 
         <header>
             <div class="container">
-                <h1 class="logo">T.imeclock</h1>
+                <h1 class="logo"><a href="/">T.imeclock</a></h1>
                 <strong><nav>
                     <ul class="menu">
                         <li><a href="/about">About</a></li>
+                        {% if g.user.is_authenticated() %}
+                            <li><a href="/logout">Logout</a></li>
+                        {% else %}
+                            <li><a href="/login">Login</a></li>
+                        {% endif %}
                     </ul>
                 </nav></strong>
             </div>

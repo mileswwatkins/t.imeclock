@@ -3,14 +3,18 @@
 {% block content %}
     <form method="POST">
         {{ form.hidden_tag() }}
-        {{ form.name.label }} {{ form.name(size=20) }}
         {{ form.email.label }} {{ form.email(size=20) }}
         {{ form.password.label }} {{ form.password(size=20) }}
         {{ form.confirm_password.label }} {{ form.confirm_password(size=20) }}
         
-        {% if form.name.errors %}
-            <ul class="errors">{% for error in form.name.errors %}
-                <li> {{ error }} </li>
+        {% if form.email.errors %}
+            <ul class="errors">{% for error in form.email.errors %}
+                <p> {{ error }} </p>
+            {% endfor %}</ul>
+        {% endif %}
+        {% if form.password.errors %}
+            <ul class="errors">{% for error in form.password.errors %}
+                <p> {{ error }} </p>
             {% endfor %}</ul>
         {% endif %}
         
