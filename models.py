@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from md5 import md5
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
@@ -17,7 +17,7 @@ class User(Base):
 
     def __init__(self, email, password):
         self.email = email
-        self.password = md5(password).hexdigest()
+        self.password = generate_password_hash(password)
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
@@ -35,10 +35,7 @@ class User(Base):
         return unicode(self.id)
 
     def check_password(self, entered_password):
-        if md5(entered_password).hexdigest() == self.password:
-            return True
-        else:
-            return False
+        return check_password_hash(self.password, entered_password)
 
 
 class Project(Base):
