@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+	<p> user: {{ user }}</p>
+
+    {% if projects %}
+        <ul> {% for project in projects %}
+            <li> {{ project.name }} </li>
+        {% endfor %} </ul>
+    {% endif %}
+
+{% endblock %}

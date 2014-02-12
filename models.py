@@ -46,8 +46,9 @@ class Project(Base):
     start = Column(DateTime)
     end = Column(DateTime)
 
-    def __init__(self, name):
+    def __init__(self, name, user_id):
         self.name = name
+        self.user_id = user_id
 
     def __repr__(self):
         return '<Project {0} for user {1}>'.format(self.name, self.user_id)

@@ -65,24 +65,17 @@ class RegisterForm(Form):
     confirm_password = PasswordField('Confirm Password', validators=[
             Length(min=1, max=32, message="Maximum password length is 32")])
 
+# Create a new project form
+class NewProjectForm(Form):
+    new_project = TextField('New Project Name', validators=[Length(min=1)])
+
+
 @app.route('/')
 def no_route():
     if current_user.is_authenticated():
         return redirect('/current')
     else:
         return redirect('/login')
-
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user.check_password(form.password.data) == True:
-            login_user(user, remember=True)
-            return redirect('/user_list')
-        else:
-            return render_template('login.html', form=form)
-    return render_template('login.html', form=form)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -95,15 +88,15 @@ def register():
         return redirect('/user_list')
     return render_template('register.html', form=form)
 
-@app.route('/current', methods=['POST', 'GET'])
-@login_required
-def current():
-    pass
-
-@app.route('/history', methods=['POST', 'GET'])
-@login_required
-def history():
-    pass
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user.check_password(form.password.data):
+            login_user(user, remember=True)
+            return redirect('/user_list')
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 @login_required
@@ -111,14 +104,38 @@ def logout():
     logout_user()
     return redirect('/')
 
-# For development purposes, print a list of all users
-@app.route('/user_list')
-def user_list():
-    return render_template('user_list.html', users=User.query.all())
+@app.route('/current', methods=['POST', 'GET'])
+@login_required
+def current():
+    form = NewProjectForm()
+    if form.validate_on_submit():
+        project = Project(name=form.new_project.data, user_id=current_user.id)
+        session.add(project)
+        session.commit()
+    return render_template('current.html', form=form)
+
+@app.route('/history', methods=['POST', 'GET'])
+@login_required
+def history():
+    pass
 
 @app.route('/about')
 def about():
     return render_template('about.html')
+
+# For development purposes, print a list of all users and their passwords
+@app.route('/user_list')
+def user_list():
+    return render_template('user_list.html', users=User.query.all())
+
+# For development purposes, print a list of all the projects of a user
+@app.route('/project_list')
+@login_required
+def project_list():
+    return render_template(
+            'project_list.html',
+            user=current_user.email,
+            projects=Project.query.filter_by(user_id=current_user.id))
 
 if __name__ == '__main__':
     app.run()
