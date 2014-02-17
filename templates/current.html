@@ -1,8 +1,17 @@
 {% extends "layout.html" %}
 
 {% block content %}
+    {% if current_project %}
+        <p>Current project: {{ current_project.name }}</p>
+    {% endif %}
+
     <form method="POST">
         {{ form.hidden_tag() }}
+
+        <p>Pick an existing project to begin working on:</p>
+        {{ form.existing_project.label}} {{ form.existing_project }}
+
+        <p>Or, name a new project to start working on:</p>
         {{ form.new_project.label }} {{ form.new_project(size=20) }}
 
         {% if form.new_project.errors %}

@@ -4,14 +4,16 @@ from flask.ext.login import LoginManager, login_required, login_user, \
         logout_user, current_user
 
 from flask_wtf import Form
-from wtforms import TextField, PasswordField
+from wtforms import TextField, PasswordField, SelectField
 from wtforms.validators import Email, Length, EqualTo
 
 from contextlib import closing
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, distinct
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+
+from datetime import datetime
 
 from database import session
 from models import User, Project
@@ -67,7 +69,8 @@ class RegisterForm(Form):
 
 # Create a new project form
 class NewProjectForm(Form):
-    new_project = TextField('New Project Name', validators=[Length(min=1)])
+    existing_project = SelectField("Existing Project", coerce=int)
+    new_project = TextField("New Project Name")
 
 
 @app.route('/')
@@ -92,7 +95,7 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter(User.email == form.email.data).first()
         if user.check_password(form.password.data):
             login_user(user, remember=True)
             return redirect('/user_list')
@@ -108,11 +111,42 @@ def logout():
 @login_required
 def current():
     form = NewProjectForm()
+    current_project = Project.query.filter(
+            Project.start, not Project.end).first()
+
+    # Generate a list of existing projects from which user can choose
+    form_choices = [(-1, "")]
+    existing_projects = Project.query.filter(user_id == current_user.id).\
+            distinct("name").order_by("name")
+    for project in existing_projects:
+        form_choices.append((project.id, project.name))
+    form.existing_project.choices = form_choices
+
     if form.validate_on_submit():
-        project = Project(name=form.new_project.data, user_id=current_user.id)
+        # Close the current project, if one exists
+        if current_project:
+            current_project.end = datetime.now()
+            session.commit()
+
+        # If user selected an existing project, take that project's name
+        if form.existing_project.data != -1:
+            project_name = Project.query.filter(
+                    user_id == current_user.id,
+                    id == form.existing_project.data)\
+                    .first().name
+        # If the user provided a new name, use that instead
+        else:
+            project_name = form.new_project.data
+        # Create a new database record
+        project = Project(name=project_name, user_id=current_user.id)
+        project.start = datetime.now()
         session.add(project)
         session.commit()
-    return render_template('current.html', form=form)
+
+    return render_template(
+            'current.html',
+            form=form,
+            current_project=current_project)
 
 @app.route('/history', methods=['POST', 'GET'])
 @login_required
@@ -135,7 +169,7 @@ def project_list():
     return render_template(
             'project_list.html',
             user=current_user.email,
-            projects=Project.query.filter_by(user_id=current_user.id))
+            projects=Project.query.filter(user_id == current_user.id))
 
 if __name__ == '__main__':
     app.run()
