@@ -1,5 +1,5 @@
-Anyone can access the site and create an account, made unique by their email address and secured by a password (which is stored using a salted hash)
+Anyone can access the site and create an account, made unique by their email address and secured by a password (which is stored using a salted hash).
 
-On the main page, users can see which project they are currently working on, and when they started on it. They can also switch to a different project (and are given choices of existing projects, or an option to create a new one) or cease working
+On the main page, users can see which project they are currently working on, and when they started on it. They can also switch to a different project (and are given choices of existing projects, or an option to create a new one) or cease working.
 
 On the history page, users are presented with a list of the projects they have worked on for the current day, and how many hours they have spent. The user can then change the time span they are looking at, to include whatever past days they wish.
