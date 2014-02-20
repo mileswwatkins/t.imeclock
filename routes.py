@@ -1,19 +1,18 @@
 from flask import Flask, render_template, redirect, url_for, g, request
 
-from flask.ext.login import LoginManager, login_required, login_user, \
+from flask.ext.login import LoginManager, login_required, login_user,\
         logout_user, current_user
 
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, SelectField
+from wtforms import TextField, PasswordField, SelectField, DateField
 from wtforms.validators import Email, Length, EqualTo
 
 from contextlib import closing
 
-from sqlalchemy import create_engine, distinct
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import distinct
+from sqlalchemy.sql import func
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 from database import session
 from models import User, Project
@@ -72,6 +71,12 @@ class NewProjectForm(Form):
     existing_project = SelectField("Existing Project", coerce=int)
     new_project = TextField("New Project Name")
 
+# Create a form to select start and end dates for the history view
+class HistoryDateForm(Form):
+    start_date = DateField("Work On or After This Date (yyyy-mm-dd format)",
+            default=date(2014, 1, 1))
+    end_date = DateField("Work On or Before This Date (yyyy-mm-dd format)",
+            default=datetime.today() + timedelta(1))
 
 @app.route('/')
 def no_route():
@@ -98,7 +103,7 @@ def login():
         user = User.query.filter(User.email == form.email.data).first()
         if user.check_password(form.password.data):
             login_user(user, remember=True)
-            return redirect('/user_list')
+            return redirect('/')
     return render_template('login.html', form=form)
 
 @app.route('/logout')
@@ -156,13 +161,21 @@ def current():
 @app.route('/history', methods=['POST', 'GET'])
 @login_required
 def history():
+    form = HistoryDateForm()
+
+    start_date = datetime.now().date()
+    end_date = datetime.now().date() + timedelta(1)
+    if form.validate_on_submit():
+        start_date = form.start_date.data
+        end_date = form.end_date.data
+
     return render_template(
             'history.html',
-            current_user=current_user,
-            projects=Project.query.\
+            form=form,
+            projects=session.query(func.sum(Project.start - Project.end)).\
                     filter(Project.user_id == current_user.id).\
-                    filter(Project.start.date() == datetime.now().date()).\
-                    filter(Project.end.date() == datetime.now().date()).\
+                    filter(Project.start >= start_date).\
+                    filter(Project.end <= end_date).\
                     group_by(Project.name))
 
 @app.route('/about')

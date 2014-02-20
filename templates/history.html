@@ -1,13 +1,16 @@
 {% extends "layout.html" %}
 
 {% block content %}
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <p>{{ form.start_date.label }}: {{ form.start_date }}</p>
+        <p>{{ form.end_date.label }}: {{ form.end_date }}</p>
+        <input type="submit" value="Show project hours for this period">
+    </form>
 
-	<p> user: {{ current_user.email }}</p>
+    <hr>
 
-    {% if projects %}
-        <ul> {% for project in projects %}
-            <li> {{ project.name}}, start={{ project.start}}, end={{ project.end}} </li>
-        {% endfor %} </ul>
+	{% if projects %}
+		{{ projects }}
     {% endif %}
-
 {% endblock %}

@@ -11,12 +11,14 @@
                 <h1 class="logo"><a href="/">T.imeclock</a></h1>
                 <strong><nav>
                     <ul class="menu">
-                        <li><a href="/about">About</a></li>
                         {% if g.user.is_authenticated() %}
+                            <li><a href="/current">Current</a></li>
+                            <li><a href="/history">History</a></li>
                             <li><a href="/logout">Logout</a></li>
                         {% else %}
                             <li><a href="/login">Login</a></li>
                         {% endif %}
+                        <li><a href="/about">About</a></li>
                     </ul>
                 </nav></strong>
             </div>
