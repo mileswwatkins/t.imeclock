@@ -11,6 +11,8 @@
     <hr>
 
 	{% if projects %}
-		{{ projects }}
+		{% for project in projects %}
+			<p>{{ project }}</p>
+		{% endfor %}
     {% endif %}
 {% endblock %}

@@ -127,6 +127,7 @@ def current():
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
     existing_projects = Project.query.\
             filter(Project.user_id == current_user.id).\
+            filter(Project.name != current_project.name).\
             group_by(Project.name).order_by("name")
     for project in existing_projects:
         form_choices.append((project.id, project.name))
@@ -136,7 +137,6 @@ def current():
         # Close the current project, if one exists
         if current_project:
             current_project.end = datetime.now()
-            session.commit()
 
         # If user selected an existing project, retrieve that project's name
         if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
@@ -164,19 +164,21 @@ def history():
     form = HistoryDateForm()
 
     start_date = datetime.now().date()
+    # Need to add timedelta(1) so that the end is the very close of the day
+    # This is functionally the same as the very first moment of the next day
     end_date = datetime.now().date() + timedelta(1)
     if form.validate_on_submit():
         start_date = form.start_date.data
-        end_date = form.end_date.data
+        end_date = form.end_date.data + timedelta(1)
 
     return render_template(
             'history.html',
             form=form,
-            projects=session.query(func.sum(Project.start - Project.end)).\
+            projects=session.query(Project.name, Project.duration).\
                     filter(Project.user_id == current_user.id).\
                     filter(Project.start >= start_date).\
                     filter(Project.end <= end_date).\
-                    group_by(Project.name))
+                    all())
 
 @app.route('/about')
 def about():

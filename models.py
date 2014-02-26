@@ -44,6 +44,7 @@ class Project(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     start = Column(DateTime)
     end = Column(DateTime)
+    duration = end - start
 
     def __init__(self, name, user_id):
         self.name = name
