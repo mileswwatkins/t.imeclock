@@ -125,12 +125,13 @@ def current():
     # Generate a list of existing projects from which user can choose
     DEFAULT_CHOICE_NO_PROJECT = (-1, "")
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
-    existing_projects = Project.query.\
-            filter(Project.user_id == current_user.id).\
-            filter(Project.name != current_project.name).\
-            group_by(Project.name).order_by("name")
-    for project in existing_projects:
-        form_choices.append((project.id, project.name))
+    if current_project:
+        existing_projects = Project.query.\
+                filter(Project.user_id == current_user.id).\
+                filter(Project.name != current_project.name).\
+                group_by(Project.name).order_by("name")
+        for project in existing_projects:
+            form_choices.append((project.id, project.name))
     form.existing_project.choices = form_choices
 
     if form.validate_on_submit():
@@ -163,22 +164,19 @@ def current():
 def history():
     form = HistoryDateForm()
 
-    start_date = datetime.now().date()
     # Need to add timedelta(1) so that the end is the very close of the day
-    # This is functionally the same as the very first moment of the next day
-    end_date = datetime.now().date() + timedelta(1)
-    if form.validate_on_submit():
-        start_date = form.start_date.data
-        end_date = form.end_date.data + timedelta(1)
+    # This is functionally equivalent to the very first moment of the next day
+    start_date = form.start_date.data
+    end_date = form.end_date.data + timedelta(1)
 
     return render_template(
             'history.html',
             form=form,
-            projects=session.query(Project.name, Project.duration).\
+            projects=session.query(Project.name).\
                     filter(Project.user_id == current_user.id).\
                     filter(Project.start >= start_date).\
                     filter(Project.end <= end_date).\
-                    all())
+                    group_by("name").all())
 
 @app.route('/about')
 def about():
