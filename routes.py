@@ -172,11 +172,13 @@ def history():
     return render_template(
             'history.html',
             form=form,
-            projects=session.query(Project.name).\
+            # Issue: this query does not include the currently ongoing project
+            # Issue: this query does not sum by Project.name
+            projects=Project.query.\
                     filter(Project.user_id == current_user.id).\
                     filter(Project.start >= start_date).\
                     filter(Project.end <= end_date).\
-                    group_by("name").all())
+                    all())
 
 @app.route('/about')
 def about():

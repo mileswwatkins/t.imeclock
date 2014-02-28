@@ -12,7 +12,7 @@
 
 	{% if projects %}
 		{% for project in projects %}
-			<p>{{ project }}</p>
+			<p>{{ project.name }}, {{ project.end - project.start }}</p>
 		{% endfor %}
     {% endif %}
 {% endblock %}
