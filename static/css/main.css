@@ -85,3 +85,12 @@ h3 {
   letter-spacing: -1px;
   color: #999;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+  text-align:right;
+}

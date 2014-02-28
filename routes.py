@@ -14,6 +14,8 @@ from sqlalchemy.sql import func
 
 from datetime import datetime, date, timedelta
 
+from operator import itemgetter
+
 from database import session
 from models import User, Project
 
@@ -169,16 +171,43 @@ def history():
     start_date = form.start_date.data
     end_date = form.end_date.data + timedelta(1)
 
+    # Issue: this query does not include the currently ongoing project
+    projects=Project.query.\
+            filter(Project.user_id == current_user.id).\
+            filter(Project.start >= start_date).\
+            filter(Project.end <= end_date).\
+            all()
+
+    # Group by project name, and sum durations
+    project_durations = {}
+    for project in projects:
+        duration = project.end - project.start
+        if project.name not in project_durations:
+            project_durations[project.name] = duration
+        else:
+            project_durations[project.name] = duration + \
+                    project_durations[project.name]
+
+    durations = []
+    for project, duration in project_durations.iteritems():
+        duration_mins, duration_secs = divmod(duration.seconds, 60)
+        duration_hours, duration_mins = divmod(duration_mins, 60)
+        duration_text = ""
+        if duration.days > 0:
+            duration_text += str(duration_total.days) + " days, "
+        if duration_hours > 0:
+            duration_text += str(duration_hours) + " hours, "
+
+        duration_text += str(duration_mins) + " minutes"
+        durations.append((project, duration_text))
+
+    # Sort output alphabetically by project name
+    durations_sorted = sorted(durations, key=itemgetter(0))
+
     return render_template(
             'history.html',
             form=form,
-            # Issue: this query does not include the currently ongoing project
-            # Issue: this query does not sum by Project.name
-            projects=Project.query.\
-                    filter(Project.user_id == current_user.id).\
-                    filter(Project.start >= start_date).\
-                    filter(Project.end <= end_date).\
-                    all())
+            durations=durations_sorted)
 
 @app.route('/about')
 def about():
