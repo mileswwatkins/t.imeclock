@@ -3,7 +3,7 @@
 {% block content %}
     {% if current_project %}
         <p>Current project: {{ current_project.name }}</p>
-        <p>Started working on this project at {{ current_project.start }}
+        <p>Started working on this project at {{ current_project.start.strftime("%I:%M %p").lstrip("0") }}
         <br>
         <p><i>Switch from this project to a different one below.</i></p>
     {% else %}

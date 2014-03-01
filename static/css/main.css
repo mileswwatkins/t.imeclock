@@ -6,6 +6,11 @@ body {
   background-color: #F8F8F8;
 }
  
+a:hover, a:visited, a:link, a:active {
+  color: #000000;
+  text-decoration: none;
+}
+
 /*
  * Create orange header with a black logo
  */
@@ -26,11 +31,6 @@ header h1.logo {
   float: left;
 }
  
-header h1.logo:hover {
-  color: #000000;
-  text-decoration: none;
-}
- 
 /*
  * Display navigation links inline
  */
@@ -45,7 +45,7 @@ header h1.logo:hover {
 }
 
 .menu li + li {
-  margin-left: 35px;
+  margin-left: 30px;
 }
 
 .menu li a {
@@ -86,11 +86,19 @@ h3 {
   color: #999;
 }
 
+/*
+ * Style tables
+*/
+
 table {
   border-collapse: collapse;
 }
 
 table, th, td {
   border: 1px solid black;
-  text-align:right;
+  text-align:left;
+}
+
+th, td {
+  padding:6px;
 }
