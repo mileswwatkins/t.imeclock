@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
 
 from werkzeug.security import generate_password_hash, check_password_hash
-
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Interval, ForeignKey
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -44,6 +43,7 @@ class Project(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     start = Column(DateTime)
     end = Column(DateTime)
+    duration = Column(Interval)
 
     def __init__(self, name, user_id):
         self.name = name

@@ -1,20 +1,15 @@
-from flask import Flask, render_template, redirect, url_for, g, request
+from contextlib import closing
+from datetime import datetime, date, timedelta
+from operator import itemgetter
 
+from flask import Flask, render_template, redirect, url_for, g, request
 from flask.ext.login import LoginManager, login_required, login_user,\
         logout_user, current_user
-
 from flask_wtf import Form
 from wtforms import TextField, PasswordField, SelectField, DateField
 from wtforms.validators import Email, Length, EqualTo
-
-from contextlib import closing
-
 from sqlalchemy import distinct
 from sqlalchemy.sql import func
-
-from datetime import datetime, date, timedelta
-
-from operator import itemgetter
 
 from database import session
 from models import User, Project
@@ -80,6 +75,7 @@ class HistoryDateForm(Form):
     end_date = DateField("Work On or Before This Date (yyyy-mm-dd format)",
             default=datetime.today() + timedelta(1))
 
+
 @app.route('/')
 def no_route():
     if current_user.is_authenticated():
@@ -140,6 +136,8 @@ def current():
         # Close the current project, if one exists
         if current_project:
             current_project.end = datetime.now()
+            current_project.duration = \
+                    current_project.end - current_project.start
 
         # If user selected an existing project, retrieve that project's name
         if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
@@ -172,21 +170,11 @@ def history():
     end_date = form.end_date.data + timedelta(1)
 
     # Issue: this query does not include the currently ongoing project
-    projects=Project.query.\
+    projects=session.query(func.sum(Project.duration).label("sum_durations")).\
             filter(Project.user_id == current_user.id).\
             filter(Project.start >= start_date).\
             filter(Project.end <= end_date).\
-            all()
-
-    # Group by project name, and sum durations
-    project_durations = {}
-    for project in projects:
-        duration = project.end - project.start
-        if project.name not in project_durations:
-            project_durations[project.name] = duration
-        else:
-            project_durations[project.name] = duration + \
-                    project_durations[project.name]
+            group_by("name").all()
 
     durations = []
     for project, duration in project_durations.iteritems():
@@ -194,7 +182,7 @@ def history():
         duration_hours, duration_mins = divmod(duration_mins, 60)
         duration_text = ""
         if duration.days > 0:
-            duration_text += str(duration_total.days) + " days, "
+            duration_text += str(duration.days) + " days, "
         if duration_hours > 0:
             duration_text += str(duration_hours) + " hours, "
 
