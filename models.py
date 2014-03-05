@@ -1,10 +1,9 @@
-from datetime import datetime, timedelta
-
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import Column, Integer, String, DateTime, Interval, ForeignKey
 from sqlalchemy.orm import relationship
 
 from database import Base
+
 
 class User(Base):
     __tablename__ = 'users'
