@@ -18,11 +18,11 @@ from models import User, Project
 # Set application constants, and create application
 DATABASE = '/tmp/timeclock.db'
 DEBUG = True
-SECRET_KEY = 'whateverrrr'
+SECRET_KEY = 'qmTcssHWNArLzQP9LmBJq7Y4hvdfc4'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
 # Configure login manager
 lm = LoginManager()
