@@ -25,5 +25,6 @@ def init_db():
     # from models import User, Project
     Base.metadata.create_all(bind=engine)
 
+## TODO -> fix this!
 if __name__ == "__main__":
     init_db()
