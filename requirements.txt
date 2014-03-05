@@ -14,7 +14,6 @@ bdist-mpkg==0.4.4
 gunicorn==18.0
 itsdangerous==0.23
 macholib==1.5
-modulegraph==0.10.1
 numpy==1.6.2
 py-bcrypt==0.4
 py2app==0.7.1
