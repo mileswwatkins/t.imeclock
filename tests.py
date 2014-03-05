@@ -2,6 +2,11 @@ from models import User, Project
 import unittest
 from datetime import datetime
 
+## TODO -> refactor more of these tests
+# suggestions:
+# setUp -> should created a test database
+# tearDownn -> should delete the test database
+
 
 class ProjectTests(unittest.TestCase):
     def setUp(self):
