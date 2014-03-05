@@ -12,3 +12,4 @@ itsdangerous==0.23
 python-dateutil==1.5
 virtualenv==1.10.1
 virtualenvwrapper==4.2
+psycopg2==2.5
