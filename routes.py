@@ -120,16 +120,16 @@ def current():
             first()
 
     # Generate a list of existing projects from which user can choose
-    DEFAULT_CHOICE_NO_PROJECT = (-1, "")
-    form_choices = [DEFAULT_CHOICE_NO_PROJECT]
-    if current_project:
-        existing_projects = Project.query.\
-                filter(Project.user_id == current_user.id).\
-                filter(Project.name != current_project.name).\
-                group_by(Project.name).order_by("name")
-        for project in existing_projects:
-            form_choices.append((project.id, project.name))
-    form.existing_project.choices = form_choices
+    # DEFAULT_CHOICE_NO_PROJECT = (-1, "")
+    # form_choices = [DEFAULT_CHOICE_NO_PROJECT]
+    # if current_project:
+    #     existing_projects = Project.query.\
+    #             filter(Project.user_id == current_user.id).\
+    #             filter(Project.name != current_project.name).\
+    #             group_by(Project.name).order_by("name")
+    #     for project in existing_projects:
+    #         form_choices.append((project.id, project.name))
+    # form.existing_project.choices = form_choices
 
     if form.validate_on_submit():
         # Close the current project, if one exists
