@@ -120,16 +120,18 @@ def current():
             first()
 
     # Generate a list of existing projects from which user can choose
-    # DEFAULT_CHOICE_NO_PROJECT = (-1, "")
-    # form_choices = [DEFAULT_CHOICE_NO_PROJECT]
-    # if current_project:
-    #     existing_projects = Project.query.\
-    #             filter(Project.user_id == current_user.id).\
-    #             filter(Project.name != current_project.name).\
-    #             group_by(Project.name).order_by("name")
-    #     for project in existing_projects:
-    #         form_choices.append((project.id, project.name))
-    # form.existing_project.choices = form_choices
+    DEFAULT_CHOICE_NO_PROJECT = (-1, "")
+    # Issue: allow user to take a break, not working on any project
+    # Issue: allow user to stop working for the day
+    form_choices = [DEFAULT_CHOICE_NO_PROJECT]
+    if current_project:
+        existing_projects = Project.query.\
+                filter(Project.user_id == current_user.id).\
+                filter(Project.name != current_project.name).\
+                group_by(Project.name).order_by("name")
+        for project in existing_projects:
+            form_choices.append((project.id, project.name))
+    form.existing_project.choices = form_choices
 
     if form.validate_on_submit():
         # Close the current project, if one exists
@@ -169,14 +171,15 @@ def history():
     end_date = form.end_date.data + timedelta(1)
 
     # Issue: this query does not include the currently ongoing project
-    projects=session.query(func.sum(Project.duration).label("sum_durations")).\
+    projects=session.query(Project.name,
+            func.sum(Project.duration)).\
             filter(Project.user_id == current_user.id).\
             filter(Project.start >= start_date).\
             filter(Project.end <= end_date).\
             group_by("name").all()
 
     durations = []
-    for project, duration in project_durations.iteritems():
+    for project, duration in projects.iteritems():
         duration_mins, duration_secs = divmod(duration.seconds, 60)
         duration_hours, duration_mins = divmod(duration_mins, 60)
         duration_text = ""
