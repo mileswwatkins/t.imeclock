@@ -6,7 +6,7 @@
 
     {% if projects %}
         <ul> {% for project in projects %}
-            <li> {{ project.name}}, start={{ project.start}}, end={{ project.end}} </li>
+            <li> {{ project.name}}, start={{ project.start}}, end={{ project.end}}, duration={{ project.duration }} </li>
         {% endfor %} </ul>
     {% endif %}
 
