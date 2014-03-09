@@ -209,15 +209,13 @@ def history():
     # Sort output alphabetically by project name
     durations_sorted = sorted(durations, key=itemgetter(0))
 
-    # Issue: add button to allow user to download their whole history
-
     return render_template(
             'history.html',
             form=form,
             durations=durations_sorted)
 
 # Return a file containing all of the current user's data
-@app.route('/download.csv')
+@app.route('/user_complete_history.csv')
 @login_required
 def generate_csv():
     COLUMNS = ["name", "start", "end"]
@@ -225,9 +223,12 @@ def generate_csv():
             filter(Project.user_id == current_user.id)\
             .all()
     def generate():
-        # yield ",".join(COLUMNS) + "\n"
+        yield ",".join(COLUMNS) + "\n"
         for project in projects:
-            yield ",".join(project) + "\n"
+            character_project = []
+            for value in project:
+                character_project.append(str(value))
+            yield ",".join(character_project) + "\n"
     return Response(generate(), mimetype='txt/csv')
 
 @app.route('/about')
