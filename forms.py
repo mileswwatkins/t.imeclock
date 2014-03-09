@@ -9,19 +9,18 @@ from wtforms.validators import Email, Length, EqualTo, Required,\
 
 # Create a login form
 class LoginForm(Form):
-    email = TextField('Email', validators=[Required(), Email()])
-    password = PasswordField('Password', validators=[Required()])
+    email = TextField('Email', validators=[Email()])
+    password = PasswordField('Password',
+            validators=[Required(message="You must provide a password")])
 
 # Create a registration form
 class RegisterForm(Form):
     email = TextField('Email', validators=[
-            Required(),
-            Email(message="A valid email address, please")])
+            Email(message="Must be a valid email address")])
     password = PasswordField('Password', validators=[
-            Required(),
+            Required(message="Must provide a password"),
             EqualTo("confirm_password", message="Passwords must match")])
-    confirm_password = PasswordField('Confirm Password',
-            validators=[Required()])
+    confirm_password = PasswordField('Confirm Password')
 
 # Create a new project form
 class NewProjectForm(Form):
@@ -36,9 +35,9 @@ def date_validator(form, field):
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
-    start_date = DateField("Work On or After This Date (yyyy-mm-dd format)",
+    start_date = DateField("Work On or After This Date (yyyy-mm-dd)",
             default=date(2014, 1, 1),
-            validators=[Required(), date_validator])
-    end_date = DateField("Work On or Before This Date (yyyy-mm-dd format)",
+            validators=[Required("Start date required"), date_validator])
+    end_date = DateField("Work On or Before This Date (yyyy-mm-dd)",
             default=datetime.today() + timedelta(1),
-            validators=[Required(), date_validator])
+            validators=[Required("End date required"), date_validator])
