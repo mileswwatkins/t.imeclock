@@ -226,8 +226,8 @@ def generate_csv():
         projects=session.query(Project.name, Project.start, Project.end).\
                 filter(Project.user_id == current_user.id)\
                 .all()
-        for project in projects:
-            yield ",".join(project) + "\n"
+        # for project in projects:
+            # yield ",".join(project) + "\n"
     return Response(generate(), mimetype='txt/csv')
 
 @app.route('/about')
