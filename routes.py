@@ -154,8 +154,8 @@ def history():
     projects=session.query(Project.name,
             func.sum(Project.duration)).\
             filter(Project.user_id == current_user.id).\
-            filter(Project.start >= start_date).\
-            filter(Project.end <= end_date).\
+            filter(Project.start.date() >= start_date.date()).\
+            filter(Project.end.date() <= end_date.date()).\
             group_by(Project.name).all()
 
     # Convert summed durations to plain English
