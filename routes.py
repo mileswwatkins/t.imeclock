@@ -183,6 +183,7 @@ def history():
     for project in projects:
         project[0] = name
         project[1] = duration
+
         duration_mins, duration_secs = divmod(duration.seconds, 60)
         duration_hours, duration_mins = divmod(duration_mins, 60)
         duration_text = ""
@@ -192,7 +193,7 @@ def history():
             duration_text += str(duration_hours) + " hours, "
 
         duration_text += str(duration_mins) + " minutes"
-        durations.append((project, duration_text))
+        durations.append((name, duration_text))
 
     # Sort output alphabetically by project name
     durations_sorted = sorted(durations, key=itemgetter(0))
