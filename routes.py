@@ -139,6 +139,9 @@ def current():
             current_project.end = datetime.now()
             current_project.duration = \
                     current_project.end - current_project.start
+            # Add it to the form selection drop-down
+            form.existing_project.choices.append(
+                    (current_project.id, current_project.name))
 
         # If user selected an existing project, retrieve that project's name
         if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
@@ -146,10 +149,16 @@ def current():
                     filter(Project.user_id == current_user.id).\
                     filter(Project.id == form.existing_project.data).\
                     first().name
+            # Remove this project from the form selection drop-down
+            form.existing_project.choices.remove(
+                    (form.existing_project.data,
+                    project_name))
         # If the user wants to start on a new project, use that name instead
         # Issue: need to forbid user from using one of their existing names
         else:
             project_name = form.new_project.data
+        # Issue: deal with both select and new project fields being left blank
+
         # Create a new database record for that project name
         current_project = Project(name=project_name, user_id=current_user.id)
         current_project.start = datetime.now()
@@ -182,8 +191,8 @@ def history():
     # Convert summed durations to plain English
     durations = []
     for project in projects:
-        project[0] = name
-        project[1] = duration
+        name = project[0]
+        duration = project[1]
 
         duration_mins, duration_secs = divmod(duration.seconds, 60)
         duration_hours, duration_mins = divmod(duration_mins, 60)
