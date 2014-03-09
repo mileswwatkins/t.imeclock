@@ -128,7 +128,7 @@ def current():
         existing_projects = Project.query.\
                 filter(Project.user_id == current_user.id).\
                 filter(Project.name != current_project.name).\
-                group_by(Project.name).order_by("name")
+                group_by(Project.name).order_by(Project.name)
         for project in existing_projects:
             form_choices.append((project.id, project.name))
     form.existing_project.choices = form_choices
@@ -176,7 +176,7 @@ def history():
             filter(Project.user_id == current_user.id).\
             filter(Project.start >= start_date).\
             filter(Project.end <= end_date).\
-            group_by("name").all()
+            group_by(Project.name).all()
 
     # Convert summed durations to plain English
     durations = []
