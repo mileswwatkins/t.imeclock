@@ -222,14 +222,12 @@ def history():
 def generate_csv():
     def generate():
         columns = ["name", "start", "end"]
-        for column in columns:
-            yield ",".join(column) + "\n"
+        field ",".join(columns) + "\n"
         projects=session.query(Project.name, Project.start, Project.end).\
                 filter(Project.user_id == current_user.id)\
                 .all()
         for project in projects:
-            for column in project:
-                yield ",".join(column) + "\n"
+            yield ",".join(project) + "\n"
     return Response(generate(), mimetype='txt/csv')
 
 @app.route('/about')
