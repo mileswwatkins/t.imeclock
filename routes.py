@@ -212,7 +212,7 @@ def user_list():
 @app.route('/project_list')
 @login_required
 def project_list():
-    foobar = Project.query.filter(Project.user_id == current_user.id).first()
+    foobar = Project.query.filter(Project.user_id == current_user.id)
     return render_template(
             'project_list.html',
             current_user=current_user,
