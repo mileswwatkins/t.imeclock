@@ -1,4 +1,4 @@
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 import re
 
 from flask_wtf import Form
@@ -40,5 +40,5 @@ class HistoryDateForm(Form):
             default=date(2014, 1, 1),
             validators=[Required("Start date required"), date_validator])
     end_date = DateField("Work On or Before This Date (yyyy-mm-dd)",
-            default=datetime.today() + timedelta(1),
+            default=datetime.today(),
             validators=[Required("End date required"), date_validator])

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from operator import itemgetter
 
 from flask import Flask, render_template, redirect, url_for, g, request,\
@@ -145,10 +145,8 @@ def current():
 def history():
     form = HistoryDateForm()
 
-    # Need to add timedelta(1) so that the end is the very close of the day
-    # This is functionally equivalent to the very first moment of the next day
     start_date = form.start_date.data
-    end_date = form.end_date.data + timedelta(1)
+    end_date = form.end_date.data
 
     # Issue: this query does not include the currently ongoing project
     projects=session.query(Project.name,
@@ -188,7 +186,7 @@ def history():
 @login_required
 def generate_csv():
     COLUMNS = ["name", "start", "end"]
-    projects=session.query(Project.name, Project.start, Project.end).\
+    projects = session.query(Project.name, Project.start, Project.end).\
             filter(Project.user_id == current_user.id)\
             .all()
     def generate():

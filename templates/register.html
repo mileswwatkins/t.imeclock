@@ -7,13 +7,8 @@
         {{ form.password.label }} {{ form.password(size=20) }}
         {{ form.confirm_password.label }} {{ form.confirm_password(size=20) }}
         
-        {% if form.email.errors %}
-            <ul class="errors">{% for error in form.email.errors %}
-                <p> {{ error }} </p>
-            {% endfor %}</ul>
-        {% endif %}
-        {% if form.password.errors %}
-            <ul class="errors">{% for error in form.password.errors %}
+        {% if form.email.errors or form.password.errors or form.confirm_password.errors %}
+            <ul class="errors">{% for error in form.email.errors + form.password.errors + form.confirm_password.errors %}
                 <p> {{ error }} </p>
             {% endfor %}</ul>
         {% endif %}

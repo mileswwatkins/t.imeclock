@@ -5,6 +5,13 @@
         {{ form.hidden_tag() }}
         <p>{{ form.start_date.label }}: {{ form.start_date }}</p>
         <p>{{ form.end_date.label }}: {{ form.end_date }}</p>
+ 
+        {% if form.start_date.errors or form.end_date.errors %}
+            <ul class="errors">{% for error in form.start_date.errors + form.end_date.errors %}
+                <li> {{ error }} </li>
+            {% endfor %}</ul>
+        {% endif %}
+
         <input type="submit" value="Show project hours for this period">
     </form>
 
