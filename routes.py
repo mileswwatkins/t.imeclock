@@ -178,8 +178,11 @@ def history():
             filter(Project.end <= end_date).\
             group_by("name").all()
 
+    # Convert summed durations to plain English
     durations = []
-    for project, duration in projects.iteritems():
+    for project in projects:
+        project[0] = name
+        project[1] = duration
         duration_mins, duration_secs = divmod(duration.seconds, 60)
         duration_hours, duration_mins = divmod(duration_mins, 60)
         duration_text = ""
