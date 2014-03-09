@@ -1,19 +1,16 @@
-from contextlib import closing
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 from operator import itemgetter
 
 from flask import Flask, render_template, redirect, url_for, g, request,\
         Response
 from flask.ext.login import LoginManager, login_required, login_user,\
         logout_user, current_user
-from flask_wtf import Form
-from wtforms import TextField, PasswordField, SelectField, DateField
-from wtforms.validators import Email, Length, EqualTo
 from sqlalchemy import distinct
 from sqlalchemy.sql import func
 
 from database import session
 from models import User, Project
+from forms import LoginForm, RegisterForm, NewProjectForm, HistoryDateForm
 
 
 # Set application constants, and create application
@@ -46,34 +43,6 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user
-
-
-# Create a login form
-class LoginForm(Form):
-    email = TextField('Email', validators=[Email()])
-    password = PasswordField('Password', validators=[Length(min=1, max=32)])
-
-# Create a registration form
-class RegisterForm(Form):
-    email = TextField('Email',
-            validators=[Email(message="A valid email address, please")])
-    password = PasswordField('Password', validators=[
-            Length(min=1, max=32, message="Maximum password length is 32"),
-            EqualTo("confirm_password", message="Passwords must match")])
-    confirm_password = PasswordField('Confirm Password', validators=[
-            Length(min=1, max=32, message="Maximum password length is 32")])
-
-# Create a new project form
-class NewProjectForm(Form):
-    existing_project = SelectField("Existing Project", coerce=int)
-    new_project = TextField("New Project Name")
-
-# Create a form to select start and end dates for the history view
-class HistoryDateForm(Form):
-    start_date = DateField("Work On or After This Date (yyyy-mm-dd format)",
-            default=date(2014, 1, 1))
-    end_date = DateField("Work On or Before This Date (yyyy-mm-dd format)",
-            default=datetime.today() + timedelta(1))
 
 
 @app.route('/')
