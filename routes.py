@@ -2,7 +2,8 @@ from contextlib import closing
 from datetime import datetime, date, timedelta
 from operator import itemgetter
 
-from flask import Flask, render_template, redirect, url_for, g, request
+from flask import Flask, render_template, redirect, url_for, g, request,\
+        Response
 from flask.ext.login import LoginManager, login_required, login_user,\
         logout_user, current_user
 from flask_wtf import Form
@@ -208,10 +209,29 @@ def history():
     # Sort output alphabetically by project name
     durations_sorted = sorted(durations, key=itemgetter(0))
 
+    # Issue: add button to allow user to download their whole history
+
     return render_template(
             'history.html',
             form=form,
             durations=durations_sorted)
+
+# Return a file containing all of the current user's data
+@app.route('/download.csv')
+@login_required
+def generate_csv():
+    def generate():
+        columns = Projects.__table__.columns
+        for column in columns:
+            yield ",".join(column) + "\n"
+        projects=Projects.query.\
+                filter(Project.user_id == current_user.id)\
+                .all()
+        for project in projects:
+            for column in columns:
+                yield ",".join(project.column)
+            yield "\n"
+    return Response(generate(), mimetype='txt/csv')
 
 @app.route('/about')
 def about():
