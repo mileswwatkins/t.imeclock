@@ -5,7 +5,7 @@ from flask import Flask, render_template, redirect, url_for, g, request,\
         Response
 from flask.ext.login import LoginManager, login_required, login_user,\
         logout_user, current_user
-from sqlalchemy import distinct
+from sqlalchemy import distinct, cast, Date
 from sqlalchemy.sql import func
 
 from database import session
@@ -154,8 +154,8 @@ def history():
     projects=session.query(Project.name,
             func.sum(Project.duration)).\
             filter(Project.user_id == current_user.id).\
-            filter(Project.start.date() >= start_date.date()).\
-            filter(Project.end.date() <= end_date.date()).\
+            filter(cast(Project.start, Date) >= start_date.date()).\
+            filter(cast(Project.end, Date) <= end_date.date()).\
             group_by(Project.name).all()
 
     # Convert summed durations to plain English

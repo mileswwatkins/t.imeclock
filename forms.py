@@ -9,14 +9,15 @@ from wtforms.validators import Email, Length, EqualTo, Required,\
 
 # Create a login form
 class LoginForm(Form):
-    email = TextField('Email', validators=[Email()])
+    email = TextField('Email',
+            validators=[Email(message="Must be a valid email address")])
     password = PasswordField('Password',
             validators=[Required(message="You must provide a password")])
 
 # Create a registration form
 class RegisterForm(Form):
-    email = TextField('Email', validators=[
-            Email(message="Must be a valid email address")])
+    email = TextField('Email',
+            validators=[Email(message="Must be a valid email address")])
     password = PasswordField('Password', validators=[
             Required(message="Must provide a password"),
             EqualTo("confirm_password", message="Passwords must match")])
