@@ -114,10 +114,10 @@ def logout():
 def current():
     form = NewProjectForm()
     current_project = Project.query.\
+            first()
             # filter(Project.user_id == current_user.id).\
             # filter(Project.start != None).\
             # filter(Project.end == None).\
-            first()
 
     # # Generate a list of existing projects from which user can choose
     # DEFAULT_CHOICE_NO_PROJECT = (-1, "")
