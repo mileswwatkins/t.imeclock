@@ -114,46 +114,46 @@ def logout():
 def current():
     form = NewProjectForm()
     current_project = Project.query.\
+            filter(Project.user_id == current_user.id).\
+            filter(Project.start != None).\
+            filter(Project.end == None).\
             first()
-            # filter(Project.user_id == current_user.id).\
-            # filter(Project.start != None).\
-            # filter(Project.end == None).\
 
-    # # Generate a list of existing projects from which user can choose
-    # DEFAULT_CHOICE_NO_PROJECT = (-1, "")
-    # # Issue: allow user to take a break, not working on any project
-    # # Issue: allow user to stop working for the day
-    # form_choices = [DEFAULT_CHOICE_NO_PROJECT]
-    # if current_project:
-    #     existing_projects = Project.query.\
-    #             filter(Project.user_id == current_user.id).\
-    #             filter(Project.name != current_project.name).\
-    #             group_by(Project.name).order_by("name")
-    #     for project in existing_projects:
-    #         form_choices.append((project.id, project.name))
-    # form.existing_project.choices = form_choices
+    # Generate a list of existing projects from which user can choose
+    DEFAULT_CHOICE_NO_PROJECT = (-1, "")
+    # Issue: allow user to take a break, not working on any project
+    # Issue: allow user to stop working for the day
+    form_choices = [DEFAULT_CHOICE_NO_PROJECT]
+    if current_project:
+        existing_projects = Project.query.\
+                filter(Project.user_id == current_user.id).\
+                filter(Project.name != current_project.name).\
+                group_by(Project.name).order_by("name")
+        for project in existing_projects:
+            form_choices.append((project.id, project.name))
+    form.existing_project.choices = form_choices
 
-    # if form.validate_on_submit():
-    #     # Close the current project, if one exists
-    #     if current_project:
-    #         current_project.end = datetime.now()
-    #         current_project.duration = \
-    #                 current_project.end - current_project.start
+    if form.validate_on_submit():
+        # Close the current project, if one exists
+        if current_project:
+            current_project.end = datetime.now()
+            current_project.duration = \
+                    current_project.end - current_project.start
 
-    #     # If user selected an existing project, retrieve that project's name
-    #     if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
-    #         project_name = Project.query.\
-    #                 filter(Project.user_id == current_user.id).\
-    #                 filter(Project.id == form.existing_project.data).\
-    #                 first().name
-    #     # If the user wants to start on a new project, use that name instead
-    #     else:
-    #         project_name = form.new_project.data
-    #     # Create a new database record for that project name
-    #     current_project = Project(name=project_name, user_id=current_user.id)
-    #     current_project.start = datetime.now()
-    #     session.add(current_project)
-    #     session.commit()
+        # If user selected an existing project, retrieve that project's name
+        if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
+            project_name = Project.query.\
+                    filter(Project.user_id == current_user.id).\
+                    filter(Project.id == form.existing_project.data).\
+                    first().name
+        # If the user wants to start on a new project, use that name instead
+        else:
+            project_name = form.new_project.data
+        # Create a new database record for that project name
+        current_project = Project(name=project_name, user_id=current_user.id)
+        current_project.start = datetime.now()
+        session.add(current_project)
+        session.commit()
 
     return render_template(
             'current.html',
@@ -212,11 +212,10 @@ def user_list():
 @app.route('/project_list')
 @login_required
 def project_list():
-    foobar = Project.query.filter(Project.user_id == current_user.id)
     return render_template(
             'project_list.html',
             current_user=current_user,
-            projects=foobar)
+            projects=Project.query.filter(Project.user_id == current_user.id))
 
 if __name__ == '__main__':
     app.run()
