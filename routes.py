@@ -221,13 +221,13 @@ def history():
 @login_required
 def generate_csv():
     def generate():
-        columns = ["name", "start", "end"]
-        yield ",".join(columns) + "\n"
+        COLUMNS = ["name", "start", "end"]
+        yield ",".join(COLUMNS) + "\n"
         projects=session.query(Project.name, Project.start, Project.end).\
                 filter(Project.user_id == current_user.id)\
                 .all()
-        # for project in projects:
-            # yield ",".join(project) + "\n"
+        for project in projects:
+            yield ",".join(project) + "\n"
     return Response(generate(), mimetype='txt/csv')
 
 @app.route('/about')
