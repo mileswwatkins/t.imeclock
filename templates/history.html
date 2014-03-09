@@ -10,21 +10,21 @@
 
     <hr>
 
-	{% if durations %}
-		<table align="left">
-			<thead>
-				<th>Project</th>
-				<th>Duration</th>
-			</thead>
-			<tbody>
-				{% for row in durations %}
-					<tr>
-						{% for value in row %}
-							<td> {{ value }} </td>
-						{% endfor %}
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+    {% if durations %}
+        <table align="left">
+            <thead>
+                <th>Project</th>
+                <th>Duration</th>
+            </thead>
+            <tbody>
+                {% for row in durations %}
+                    <tr>
+                        {% for value in row %}
+                            <td> {{ value }} </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 {% endblock %}

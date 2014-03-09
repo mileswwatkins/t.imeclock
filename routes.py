@@ -113,7 +113,11 @@ def logout():
 @login_required
 def current():
     form = NewProjectForm()
-    current_project = Project.query.first()
+    current_project = Project.query.\
+            # filter(Project.user_id == current_user.id).\
+            # filter(Project.start != None).\
+            # filter(Project.end == None).\
+            first()
 
     # # Generate a list of existing projects from which user can choose
     # DEFAULT_CHOICE_NO_PROJECT = (-1, "")
@@ -208,10 +212,11 @@ def user_list():
 @app.route('/project_list')
 @login_required
 def project_list():
+    foobar = Project.query.filter(Project.user_id == current_user.id).first()
     return render_template(
             'project_list.html',
             current_user=current_user,
-            projects=Project.query.filter(Project.user_id == current_user.id))
+            projects=foobar)
 
 if __name__ == '__main__':
     app.run()
