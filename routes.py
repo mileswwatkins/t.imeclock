@@ -220,12 +220,12 @@ def history():
 @app.route('/download.csv')
 @login_required
 def generate_csv():
+    COLUMNS = ["name", "start", "end"]
+    projects=session.query(Project.name, Project.start, Project.end).\
+            filter(Project.user_id == current_user.id)\
+            .all()
     def generate():
-        COLUMNS = ["name", "start", "end"]
-        yield ",".join(COLUMNS) + "\n"
-        projects=session.query(Project.name, Project.start, Project.end).\
-                filter(Project.user_id == current_user.id)\
-                .all()
+        # yield ",".join(COLUMNS) + "\n"
         for project in projects:
             yield ",".join(project) + "\n"
     return Response(generate(), mimetype='txt/csv')
