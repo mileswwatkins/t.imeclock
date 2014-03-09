@@ -222,7 +222,7 @@ def history():
 def generate_csv():
     def generate():
         columns = ["name", "start", "end"]
-        field ",".join(columns) + "\n"
+        yield ",".join(columns) + "\n"
         projects=session.query(Project.name, Project.start, Project.end).\
                 filter(Project.user_id == current_user.id)\
                 .all()
