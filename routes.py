@@ -221,7 +221,7 @@ def history():
 @login_required
 def generate_csv():
     def generate():
-        columns = Projects.__table__.columns
+        columns = projects.__table__.columns
         for column in columns:
             yield ",".join(column) + "\n"
         projects=Projects.query.\
