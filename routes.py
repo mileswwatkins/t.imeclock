@@ -128,7 +128,7 @@ def current():
         existing_projects = Project.query.\
                 filter(Project.user_id == current_user.id).\
                 filter(Project.name != current_project.name).\
-                group_by(Project.name).order_by(Project.name)
+                group_by(Project.id).order_by(Project.name)
         for project in existing_projects:
             form_choices.append((project.id, project.name))
     form.existing_project.choices = form_choices
@@ -147,6 +147,7 @@ def current():
                     filter(Project.id == form.existing_project.data).\
                     first().name
         # If the user wants to start on a new project, use that name instead
+        # Issue: need to forbid user from using one of their existing names
         else:
             project_name = form.new_project.data
         # Create a new database record for that project name
