@@ -17,8 +17,8 @@
         <p>Existing project: {{ form.existing_project }}</p>
         <p>Or, a new project: {{ form.new_project(size=20) }}</p>
 
-        {% if form.existing_project or form.new_project.errors %}
-            <ul class="errors">{% for error in form.existing_project + form.new_project.errors %}
+        {% if form.existing_project.errors or form.new_project.errors %}
+            <ul class="errors">{% for error in form.existing_project.errors + form.new_project.errors %}
                 <li> {{ error }} </li>
             {% endfor %}</ul>
         {% endif %}
