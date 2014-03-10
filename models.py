@@ -35,7 +35,7 @@ class User(Base):
     def check_password(self, entered_password):
         return check_password_hash(self.password, entered_password)
 
-
+# Issue: break Project into Project and ProjectSpell
 class Project(Base):
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
