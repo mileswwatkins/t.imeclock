@@ -56,9 +56,9 @@ class SwitchProjectForm(Form):
     # TextField was used when switching projects in the current view
     def validate_exactly_one_field_used(self, field):
         message = "Must either select an existing project OR create a new one"
-        if self.existing_project.data and new_project:
+        if self.existing_project.data and self.new_project.data:
             raise ValidationError(message)
-        elif not self.existing_project.data and not new_project:
+        elif not self.existing_project.data and not self.new_project.data:
             raise ValidationError(message)
 
     existing_project = SelectField("Existing Project")
