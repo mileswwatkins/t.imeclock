@@ -6,6 +6,22 @@ from wtforms import TextField, PasswordField, SelectField, DateField
 from wtforms.validators import Email, Length, EqualTo, Required,\
         ValidationError
 
+from database import session
+from models import User, Project
+
+
+# Validator to determine whether a date is in WTForms-compatible format
+def date_validator(form, field):
+    date_checker = re.compile('\d{4}\-\d{2}-\d{2}')
+    if not date_checker.match(field.data):
+        raise ValidationError("Date must be in yyyy-mm-dd format")
+
+# Validator to prevent the re-use of an email address during registration
+def registration_validator(form, field):
+    email_in_use = Project.query.filter(User.email == field.data).first()
+    if email_in_use:
+        raise ValidationError("That email address already has an account")
+
 
 # Create a login form
 class LoginForm(Form):
@@ -16,8 +32,9 @@ class LoginForm(Form):
 
 # Create a registration form
 class RegisterForm(Form):
-    email = TextField('Email',
-            validators=[Email(message="Must be a valid email address")])
+    email = TextField('Email', validators=[
+            Email(message="Must be a valid email address"),
+            registration_validator])
     password = PasswordField('Password', validators=[
             Required(message="Must provide a password"),
             EqualTo("confirm_password", message="Passwords must match")])
@@ -27,12 +44,6 @@ class RegisterForm(Form):
 class NewProjectForm(Form):
     existing_project = SelectField("Existing Project")
     new_project = TextField("New Project Name")
-
-# Validator to determine whether a date is in WTForms-compatible format
-def date_validator(form, field):
-    date_checker = re.compile('\d{4}\-\d{2}-\d{2}')
-    if not date_checker.match(field.data):
-        raise ValidationError("Date must be in yyyy-mm-dd format")
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):

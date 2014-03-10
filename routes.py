@@ -77,7 +77,6 @@ def no_route():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     form = RegisterForm()
-    # Issue: forbid the re-use of an email address when creating an account
     if form.validate_on_submit():
         user = User(email=form.email.data, password=form.password.data)
         session.add(user)
