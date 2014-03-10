@@ -44,6 +44,20 @@ def load_user(id):
 def before_request():
     g.user = current_user
 
+# Utility function to convert duration objects into human-readable form
+def duration_to_plain_english(duration):
+    duration_text = ""
+
+    duration_mins, duration_secs = divmod(duration.seconds, 60)
+    duration_hours, duration_mins = divmod(duration_mins, 60)
+
+    if duration.days > 0:
+        duration_text += str(duration.days) + " days, "
+    if duration_hours > 0:
+        duration_text += str(duration_hours) + " hours, "
+    duration_text += str(duration_mins) + " minutes"
+    return duration_text
+
 
 @app.route('/')
 def no_route():
@@ -111,6 +125,7 @@ def current():
             current_project.duration = \
                     current_project.end - current_project.start
             # Add it to the form selection drop-down
+            # Issue: this doesn't conform to the otherwise alphabetical order
             form.existing_project.choices.append(
                     (current_project.id, current_project.name))
 
@@ -147,7 +162,7 @@ def history():
     end_date = form.end_date.data
 
     # Issue: this query does not include the currently ongoing project
-    projects=session.query(Project.name,
+    projects = session.query(Project.name,
             func.sum(Project.duration)).\
             filter(Project.user_id == current_user.id).\
             filter(cast(Project.start, Date) >= start_date).\
@@ -159,18 +174,8 @@ def history():
     for project in projects:
         name = project[0]
         duration = project[1]
-
-        duration_mins, duration_secs = divmod(duration.seconds, 60)
-        duration_hours, duration_mins = divmod(duration_mins, 60)
-        duration_text = ""
-        if duration.days > 0:
-            duration_text += str(duration.days) + " days, "
-        if duration_hours > 0:
-            duration_text += str(duration_hours) + " hours, "
-
-        duration_text += str(duration_mins) + " minutes"
+        duration_text = duration_to_plain_english(duration)
         durations.append((name, duration_text))
-
     # Sort output alphabetically by project name
     durations_sorted = sorted(durations, key=itemgetter(0))
 
