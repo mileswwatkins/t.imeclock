@@ -54,7 +54,7 @@ class RegisterForm(Form):
 class SwitchProjectForm(Form):
     # Validator to ensure that exactly one of the SelectField and
     # TextField was used when switching projects in the current view
-    def validate_exactly_one_field used(self, field):
+    def validate_exactly_one_field_used(self, field):
         message = "Must either select an existing project OR create a new one"
         if self.existing_project.data and new_project:
             raise ValidationError(message)
@@ -63,7 +63,7 @@ class SwitchProjectForm(Form):
 
     existing_project = SelectField("Existing Project")
     new_project = TextField("New Project Name", validators=[
-            validate_exactly_one_field,
+            validate_exactly_one_field_used,
             validate_project_not_in_use])
 
 # Create a form to select start and end dates for the history view
