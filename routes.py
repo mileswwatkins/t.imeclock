@@ -10,7 +10,7 @@ from sqlalchemy.sql import func
 
 from database import session
 from models import User, Project
-from forms import LoginForm, RegisterForm, NewProjectForm, HistoryDateForm
+from forms import LoginForm, RegisterForm, SwitchProjectForm, HistoryDateForm
 
 
 # Set application constants, and create application
@@ -104,7 +104,7 @@ def logout():
 @app.route('/current', methods=['POST', 'GET'])
 @login_required
 def current():
-    form = NewProjectForm()
+    form = SwitchProjectForm()
     current_project = Project.query.\
             filter(Project.user_id == current_user.id).\
             filter(Project.start != None).\

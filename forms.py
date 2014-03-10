@@ -50,21 +50,21 @@ class RegisterForm(Form):
             EqualTo("confirm_password", message="Passwords must match")])
     confirm_password = PasswordField('Confirm Password')
 
-# Create a new project form
-class NewProjectForm(Form):
-    existing_project = SelectField("Existing Project")
-    new_project = TextField("New Project Name", validators=[
-            exactly_one_field_validator,
-            validate_project_not_in_use])
-
+# Create a switch project form
+class SwitchProjectForm(Form):
     # Validator to ensure that exactly one of the SelectField and
     # TextField was used when switching projects in the current view
-    def exactly_one_field_validator(form, field):
+    def validate_exactly_one_field used(self, field):
         message = "Must either select an existing project OR create a new one"
         if self.existing_project.data and new_project:
             raise ValidationError(message)
         elif not self.existing_project.data and not new_project:
             raise ValidationError(message)
+
+    existing_project = SelectField("Existing Project")
+    new_project = TextField("New Project Name", validators=[
+            validate_exactly_one_field,
+            validate_project_not_in_use])
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
