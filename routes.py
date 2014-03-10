@@ -108,7 +108,7 @@ def current():
     current_project = Project.query.\
             filter(Project.user_id == current_user.id).\
             filter(Project.start != None).\
-            filter(Project.end == None).\
+            filter(Project.duration == None).\
             first()
 
     # Generate a list of existing projects from which user can choose
@@ -128,9 +128,7 @@ def current():
     if form.validate_on_submit():
         # Close the current project, if one exists
         if current_project:
-            current_project.end = datetime.now()
-            current_project.duration = \
-                    current_project.end - current_project.start
+            current_project.duration = datetime.now() - current_project.start
             # Add it to the form selection drop-down
             # Issue: this doesn't conform to the otherwise alphabetical order
             form.existing_project.choices.append(
@@ -173,7 +171,7 @@ def history():
             func.sum(Project.duration)).\
             filter(Project.user_id == current_user.id).\
             filter(cast(Project.start, Date) >= start_date).\
-            filter(cast(Project.end, Date) <= end_date).\
+            filter(cast(Project.start, Date) <= end_date).\
             group_by(Project.name).all()
 
     # Convert summed durations to plain English
@@ -195,8 +193,8 @@ def history():
 @app.route('/user_complete_history.csv')
 @login_required
 def generate_csv():
-    COLUMNS = ["name", "start", "end"]
-    projects = session.query(Project.name, Project.start, Project.end).\
+    COLUMNS = ["name", "start", "duration"]
+    projects = session.query(Project.name, Project.start, Project.duration).\
             filter(Project.user_id == current_user.id)\
             .all()
     def generate():

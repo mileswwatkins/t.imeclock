@@ -39,11 +39,9 @@ class User(Base):
 class Project(Base):
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'))
-    start = Column(DateTime)
-    end = Column(DateTime)
-    duration = Column(Interval)
+    name = Column(String, nullable=False)
+    spells = relationship('Spell')
 
     def __init__(self, name, user_id):
         self.name = name
@@ -51,3 +49,19 @@ class Project(Base):
 
     def __repr__(self):
         return '<Project {0} for user {1}>'.format(self.name, self.user_id)
+
+
+class Spell(Base):
+    __tablename__ = 'spells'
+    id = Column(Integer, primary_key=True)
+    project_id = Column(Integer, ForeignKey('projects.id'))
+    start = Column(DateTime)
+    duration = Column(Interval)
+
+    def __init__(self, start, project_id):
+        self.start = name
+        self.project_id = project_id
+
+    def __repr__(self):
+        return '<Spell starting at {0} for project {1}>'.\
+                format(self.name, self.project_id)
