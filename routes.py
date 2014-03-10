@@ -95,10 +95,10 @@ def current():
     # Issue: allow user to stop working for the day
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
     if current_project:
-        existing_projects = Project.query.\
+        existing_projects = session.query(Project.id, Project.name).\
                 filter(Project.user_id == current_user.id).\
                 filter(Project.name != current_project.name).\
-                group_by(Project.name).order_by(Project.name)
+                distinct().order_by(Project.name)
         for project in existing_projects:
             form_choices.append((project.id, project.name))
     form.existing_project.choices = form_choices
