@@ -55,6 +55,7 @@ def no_route():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     form = RegisterForm()
+    # Issue: forbid the re-use of an email address when creating an account
     if form.validate_on_submit():
         user = User(email=form.email.data, password=form.password.data)
         session.add(user)
@@ -90,17 +91,17 @@ def current():
             first()
 
     # Generate a list of existing projects from which user can choose
-    DEFAULT_CHOICE_NO_PROJECT = (-1, "")
+    DEFAULT_CHOICE_NO_PROJECT = ("", "")
     # Issue: allow user to take a break, not working on any project
     # Issue: allow user to stop working for the day
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
     if current_project:
-        existing_projects = session.query(Project.id, Project.name).\
+        existing_projects = session.query(Project.name).\
                 filter(Project.user_id == current_user.id).\
                 filter(Project.name != current_project.name).\
                 distinct().order_by(Project.name)
         for project in existing_projects:
-            form_choices.append((project.id, project.name))
+            form_choices.append((project.name, project.name))
     form.existing_project.choices = form_choices
 
     if form.validate_on_submit():
@@ -115,14 +116,11 @@ def current():
 
         # If user selected an existing project, retrieve that project's name
         if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
-            project_name = Project.query.\
-                    filter(Project.user_id == current_user.id).\
-                    filter(Project.id == form.existing_project.data).\
-                    first().name
+            project_name = form.existing_project.data
             # Remove this project from the form selection drop-down
             form.existing_project.choices.remove(
                     (form.existing_project.data,
-                    project_name))
+                    form.existing_project.data))
         # If the user wants to start on a new project, use that name instead
         # Issue: need to forbid user from using one of their existing names
         else:

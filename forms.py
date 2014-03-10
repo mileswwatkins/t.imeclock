@@ -25,7 +25,7 @@ class RegisterForm(Form):
 
 # Create a new project form
 class NewProjectForm(Form):
-    existing_project = SelectField("Existing Project", coerce=int)
+    existing_project = SelectField("Existing Project")
     new_project = TextField("New Project Name")
 
 # Validator to determine whether a date is in WTForms-compatible format
