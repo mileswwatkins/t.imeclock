@@ -5,7 +5,7 @@ from flask import Flask, Response, g, redirect, render_template, request,\
         url_for
 from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
-from sqlalchemy import Date, cast, distinct
+from sqlalchemy import Date, cast, distinct, has
 from sqlalchemy.sql import func
 
 from database import session
@@ -83,6 +83,8 @@ def no_route():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        # Issue: set up an email verification system to confirm this
+        # Issue: implement a CAPTCHA to protect against illicit accounts
         user = User(email=form.email.data, password=form.password.data)
         session.add(user)
         session.commit()
@@ -111,7 +113,7 @@ def logout():
 def current():
     form = SwitchProjectForm()
     current_spell = Spell.query.\
-            filter(Spell.user == current_user).\
+            filter(Spell.project.user == current_user).\
             filter(Spell.duration == None).\
             first()
 
