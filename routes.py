@@ -176,17 +176,19 @@ def history():
     start_date = form.start_date.data
     end_date = form.end_date.data
 
-    # Include the currently-onling spell
+    # Include the currently-onling spell in the summed durations
     current_spell = Spell.query.\
-        filter(Spell.user == current_user).\
+        filter(Spell.user.has(id == current_user.id)).\
         filter(Spell.duration == None).\
         first()
     current_spell.duration = datetime.now() - current_spell.start
+
+    # Sum the durations by project
     projects = session.query(Spell.project.name, func.sum(Spell.duration)).\
-            filter(Spell.project.user == current_user).\
+            filter(Spell.project.has(id == current_user.id)).\
             filter(cast(Spell.start, Date) >= start_date).\
             filter(cast(Spell.start, Date) <= end_date).\
-            group_by(Spell.project.name).all()
+            group_by(Spell.project_id).all()
     session.rollback()
 
     # Convert summed durations to plain English
@@ -196,6 +198,7 @@ def history():
         duration = project[1]
         duration_text = duration_to_plain_english(duration)
         durations.append((name, duration_text))
+
     # Sort output alphabetically by project name
     durations.sort(key=itemgetter(0))
 
