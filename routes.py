@@ -9,7 +9,7 @@ from sqlalchemy import distinct, cast, Date
 from sqlalchemy.sql import func
 
 from database import session
-from models import User, Project
+from models import User, Project, Spell
 from forms import LoginForm, RegisterForm, SwitchProjectForm, HistoryDateForm
 
 
@@ -106,26 +106,18 @@ def logout():
 def current():
     form = SwitchProjectForm()
     current_spell = Spell.query.\
-            filter(Spell.user_id == current_user.id).\
-            filter(Spell.start != None).\
+            filter(Spell.user == current_user).\
             filter(Spell.duration == None).\
             first()
-    if current_spell:
-        current_project = Project.query.\
-                filter(Project.id == current_spell.project_id).\
-                first()
 
     # Generate a list of existing projects from which user can choose
     DEFAULT_CHOICE_NO_PROJECT = (-1, "")
     # Issue: allow user to take a break, not working on any project
     # Issue: allow user to stop working for the day
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
-    existing_projects = Project.query.\
-            filter(Project.user_id == current_user.id).\
-            distinct().order_by(Project.name)
-    for project in existing_projects:
+    for project in current_user.projects:
         # Remove current project from the set of choices
-        if project != current_project:
+        if project != current_spell.project:
             form_choices.append((project.id, project.name))
     form.existing_project.choices = form_choices
 
@@ -134,9 +126,8 @@ def current():
         if current_spell:
             current_spell.duration = datetime.now() - current_spell.start
             # Add this project to the form selection drop-down
-            # Issue: this doesn't conform to the otherwise alphabetical order
             form.existing_project.choices.append(
-                    (current_project.id, current_project.name))
+                    (current_spell.project.id, current_spell.project.name))
 
         # If user selected an existing project, retrieve that project's name
         if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
@@ -150,23 +141,25 @@ def current():
         # If the user wants to start on a new project, use that name instead
         # Issue: need to forbid user from using one of their existing names
         else:
-            current_project = Project(user_id=current_user.id, 
+            current_project = Project(
+                    user_id=current_user.id, 
                     name=form.new_project.data)
             # Add this to the projects table
             session.add(current_project)
 
         # Create a new database record for that project name
-        current_spell = Spell(
-                user_id=current_user.id,
-                project_id=current_project.id)
+        current_spell = Spell(project_id=current_project.id)
         session.add(current_spell)
+
         session.commit()
+
+    # Sort choices alphabetically by project name
+    form.existing_project.choices.sort(key=itemgetter(1))
 
     return render_template(
             'current.html',
             form=form,
-            current_spell=current_spell,
-            current_project=current_project)
+            current_spell=current_spell)
 
 @app.route('/history', methods=['POST', 'GET'])
 @login_required
@@ -176,13 +169,18 @@ def history():
     start_date = form.start_date.data
     end_date = form.end_date.data
 
-    # Issue: this query does not include the currently ongoing project
-    projects = session.query(Project.name,
-            func.sum(Project.duration)).\
-            filter(Project.user_id == current_user.id).\
-            filter(cast(Project.start, Date) >= start_date).\
-            filter(cast(Project.start, Date) <= end_date).\
-            group_by(Project.name).all()
+    # Include the currently-onling spell
+    current_spell = Spell.query.\
+        filter(Spell.user == current_user).\
+        filter(Spell.duration == None).\
+        first()
+    current_spell.duration = datetime.now() - current_spell.start
+    projects = session.query(Spell.project.name, func.sum(Spell.duration)).\
+            filter(Spell.project.user == current_user).\
+            filter(cast(Spell.start, Date) >= start_date).\
+            filter(cast(Spell.start, Date) <= end_date).\
+            group_by(Spell.project.name).all()
+    session.rollback()
 
     # Convert summed durations to plain English
     durations = []
@@ -192,28 +190,27 @@ def history():
         duration_text = duration_to_plain_english(duration)
         durations.append((name, duration_text))
     # Sort output alphabetically by project name
-    durations_sorted = sorted(durations, key=itemgetter(0))
+    durations.sort(key=itemgetter(0))
 
     return render_template(
             'history.html',
             form=form,
-            durations=durations_sorted)
+            durations=durations)
 
 # Return a file containing all of the current user's data
 @app.route('/user_complete_history.csv')
 @login_required
 def generate_csv():
     COLUMNS = ["name", "start", "duration"]
-    projects = session.query(Project.name, Project.start, Project.duration).\
-            filter(Project.user_id == current_user.id)\
-            .all()
     def generate():
         yield ",".join(COLUMNS) + "\n"
-        for project in projects:
-            character_project = []
-            for value in project:
-                character_project.append(str(value))
-            yield ",".join(character_project) + "\n"
+        for project in current_user.projects:
+            for spell in project.spells:
+                attributes = []
+                attributes.append(spell.project.name)
+                attributes.append(str(spell.start))
+                attributes.append(str(spell.duration))
+                yield ",".join(attributes) + "\n"
     return Response(generate(), mimetype='txt/csv')
 
 @app.route('/about')
@@ -231,8 +228,7 @@ def user_list():
 def project_list():
     return render_template(
             'project_list.html',
-            current_user=current_user,
-            projects=Project.query.filter(Project.user_id == current_user.id))
+            current_user=current_user)
 
 if __name__ == '__main__':
     app.run()

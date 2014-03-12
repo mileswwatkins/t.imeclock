@@ -3,8 +3,7 @@
 {% block content %}
     <form method="POST">
         {{ form.hidden_tag() }}
-        <p>{{ form.start_date.label }}: {{ form.start_date }}</p>
-        <p>{{ form.end_date.label }}: {{ form.end_date }}</p>
+        <p>Work completed between these two dates: {{ form.start_date }} – {{ form.end_date }}</p>
  
         {% if form.start_date.errors or form.end_date.errors %}
             <ul class="errors">{% for error in form.start_date.errors + form.end_date.errors %}

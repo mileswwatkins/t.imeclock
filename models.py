@@ -13,7 +13,7 @@ class User(Base):
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
 
-    projects = relationship("Project", backref="user")
+    projects = relationship("Project", order_by="Project.name", backref="user")
 
     def __init__(self, email, password):
         self.email = email
@@ -44,7 +44,7 @@ class Project(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     name = Column(String, nullable=False)
 
-    spells = relationship("Spell", backref="project")
+    spells = relationship("Spell", order_by="Spell.start", backref="project")
 
     def __init__(self, user_id, name):
         self.user_id = user_id
@@ -57,11 +57,11 @@ class Project(Base):
 class Spell(Base):
     __tablename__ = "spells"
     id = Column(Integer, primary_key=True)
-    project_id = Column(Integer, ForeignKey('projects.id'))
-    start = Column(DateTime)
+    project_id = Column(Integer, ForeignKey("projects.id"))
+    start = Column(DateTime, nullable=False)
     duration = Column(Interval)
     
-    def __init__(self, user_id, project_id):
+    def __init__(self, project_id):
         self.project_id = project_id
         self.start = datetime.now()
 
