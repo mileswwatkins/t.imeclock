@@ -14,6 +14,12 @@ class User(Base):
     password = Column(String, nullable=False)
 
     projects = relationship("Project", order_by="Project.name", backref="user")
+    spells = relationship(
+            "Spell",
+            secondary="projects",
+            primaryjoin="User.id == Project.user_id",
+            secondaryjoin="Project.id == Spell.project_id",
+            backref="user")
 
     def __init__(self, email, password):
         self.email = email
