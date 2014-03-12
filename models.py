@@ -14,12 +14,6 @@ class User(Base):
     password = Column(String, nullable=False)
 
     projects = relationship("Project", order_by="Project.name", backref="user")
-    spells = relationship(
-            "Spell",
-            secondary="projects",
-            primaryjoin="User.id == Project.user_id",
-            secondaryjoin="Project.id == Spell.project_id",
-            backref="user")
 
     def __init__(self, email, password):
         self.email = email
@@ -66,6 +60,13 @@ class Spell(Base):
     project_id = Column(Integer, ForeignKey("projects.id"))
     start = Column(DateTime, nullable=False)
     duration = Column(Interval)
+
+    user = relationship(
+            "User",
+            secondary="projects",
+            primaryjoin="Project.id == Spell.project_id",
+            secondaryjoin="User.id == Project.user_id",
+            backref="spells")
     
     def __init__(self, project_id):
         self.project_id = project_id
