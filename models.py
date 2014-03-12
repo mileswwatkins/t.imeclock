@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
-from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import Column, Integer, String, DateTime, Interval, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Interval, String
+from sqlalchemy.orm import backref, relationship
 
 from database import Base
 

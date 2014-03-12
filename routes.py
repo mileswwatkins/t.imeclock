@@ -1,20 +1,21 @@
 from datetime import datetime
 from operator import itemgetter
 
-from flask import Flask, render_template, redirect, url_for, g, request,\
-        Response
-from flask.ext.login import LoginManager, login_required, login_user,\
-        logout_user, current_user
-from sqlalchemy import distinct, cast, Date
+from flask import Flask, Response, g, redirect, render_template, request,\
+        url_for
+from flask.ext.login import LoginManager, current_user, login_required,\
+        login_user, logout_user
+from sqlalchemy import Date, cast, distinct
 from sqlalchemy.sql import func
 
 from database import session
 from models import User, Project, Spell
-from forms import LoginForm, RegisterForm, SwitchProjectForm, HistoryDateForm
+from forms import RegisterForm, LoginForm, SwitchProjectForm, HistoryDateForm
 
 
 # Set application constants, and create application
 DATABASE = '/tmp/timeclock.db'
+# Issue: after development this DEBUG needs to get turned off, for security
 DEBUG = True
 SECRET_KEY = 'qmTcssHWNArLzQP9LmBJq7Y4hvdfc4'
 
@@ -50,20 +51,24 @@ def duration_to_plain_english(duration):
     duration_hours, duration_mins = divmod(duration_mins, 60)
 
     duration_text = ""
+
     if duration.days > 0:
         if duration.days == 1:
             duration_text += "1 day, "
         else:
             duration_text += str(duration.days) + " days, "
+
     if duration_hours > 0:
         if duration_hours == 1:
             duration_text += "1 hour, "
         else:
             duration_text += str(duration_hours) + " hours, "
+
     if duration_mins == 1:
         duration_text += "1 minute"
     else:
         duration_text += str(duration_mins) + " minutes"
+
     return duration_text
 
 
