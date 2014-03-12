@@ -5,7 +5,7 @@ from flask import Flask, Response, g, redirect, render_template, request,\
         url_for
 from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
-from sqlalchemy import Date, cast, distinct, has
+from sqlalchemy import Date, cast, distinct
 from sqlalchemy.sql import func
 
 from database import session
