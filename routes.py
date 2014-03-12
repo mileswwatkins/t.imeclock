@@ -178,7 +178,7 @@ def history():
 
     # Include the currently-onling spell in the summed durations
     current_spell = Spell.query.\
-        filter(Spell.user.has(id == current_user.id)).\
+        filter(Spell.project.user.has(id == current_user.id)).\
         filter(Spell.duration == None).\
         first()
     current_spell.duration = datetime.now() - current_spell.start
