@@ -61,7 +61,7 @@ class SwitchProjectForm(Form):
         elif not self.existing_project.data and not self.new_project.data:
             raise ValidationError(message)
 
-    existing_project = SelectField("Existing Project")
+    existing_project = SelectField("Existing Project", coerce=int)
     new_project = TextField("New Project Name", validators=[
             validate_exactly_one_field_used,
             validate_project_not_in_use])

@@ -105,57 +105,67 @@ def logout():
 @login_required
 def current():
     form = SwitchProjectForm()
-    current_project = Project.query.\
-            filter(Project.user_id == current_user.id).\
-            filter(Project.start != None).\
-            filter(Project.duration == None).\
+    current_spell = Spell.query.\
+            filter(Spell.user_id == current_user.id).\
+            filter(Spell.start != None).\
+            filter(Spell.duration == None).\
             first()
+    if current_spell:
+        current_project = Project.query.\
+                filter(Project.id == current_spell.project_id).\
+                first()
 
     # Generate a list of existing projects from which user can choose
-    DEFAULT_CHOICE_NO_PROJECT = ("", "")
+    DEFAULT_CHOICE_NO_PROJECT = (-1, "")
     # Issue: allow user to take a break, not working on any project
     # Issue: allow user to stop working for the day
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
-    if current_project:
-        existing_projects = session.query(Project.name).\
-                filter(Project.user_id == current_user.id).\
-                filter(Project.name != current_project.name).\
-                distinct().order_by(Project.name)
-        for project in existing_projects:
-            form_choices.append((project.name, project.name))
+    existing_projects = Project.query.\
+            filter(Project.user_id == current_user.id).\
+            distinct().order_by(Project.name)
+    for project in existing_projects:
+        # Remove current project from the set of choices
+        if project != current_project:
+            form_choices.append((project.id, project.name))
     form.existing_project.choices = form_choices
 
     if form.validate_on_submit():
         # Close the current project, if one exists
-        if current_project:
-            current_project.duration = datetime.now() - current_project.start
-            # Add it to the form selection drop-down
+        if current_spell:
+            current_spell.duration = datetime.now() - current_spell.start
+            # Add this project to the form selection drop-down
             # Issue: this doesn't conform to the otherwise alphabetical order
             form.existing_project.choices.append(
                     (current_project.id, current_project.name))
 
         # If user selected an existing project, retrieve that project's name
         if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
-            project_name = form.existing_project.data
+            current_project = Project.query.\
+                    filter(Project.id == form.existing_project.data).\
+                    first()
             # Remove this project from the form selection drop-down
             form.existing_project.choices.remove(
-                    (form.existing_project.data,
-                    form.existing_project.data))
+                    (current_project.id, current_project.name))
+
         # If the user wants to start on a new project, use that name instead
         # Issue: need to forbid user from using one of their existing names
         else:
-            project_name = form.new_project.data
-        # Issue: deal with both select and new project fields being left blank
+            current_project = Project(user_id=current_user.id, 
+                    name=form.new_project.data)
+            # Add this to the projects table
+            session.add(current_project)
 
         # Create a new database record for that project name
-        current_project = Project(name=project_name, user_id=current_user.id)
-        current_project.start = datetime.now()
-        session.add(current_project)
+        current_spell = Spell(
+                user_id=current_user.id,
+                project_id=current_project.id)
+        session.add(current_spell)
         session.commit()
 
     return render_template(
             'current.html',
             form=form,
+            current_spell=current_spell,
             current_project=current_project)
 
 @app.route('/history', methods=['POST', 'GET'])

@@ -12,6 +12,7 @@ class User(Base):
     email = Column(String, nullable=False)
     password = Column(String, nullable=False)
     projects = relationship('Project')
+    spells = relationship('Spell')
 
     def __init__(self, email, password):
         self.email = email
@@ -43,9 +44,9 @@ class Project(Base):
     name = Column(String, nullable=False)
     spells = relationship('Spell')
 
-    def __init__(self, name, user_id):
-        self.name = name
+    def __init__(self, user_id, name):
         self.user_id = user_id
+        self.name = name
 
     def __repr__(self):
         return '<Project {0} for user {1}>'.format(self.name, self.user_id)
@@ -54,13 +55,15 @@ class Project(Base):
 class Spell(Base):
     __tablename__ = 'spells'
     id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
     project_id = Column(Integer, ForeignKey('projects.id'))
     start = Column(DateTime)
     duration = Column(Interval)
 
-    def __init__(self, start, project_id):
-        self.start = name
+    def __init__(self, user_id, project_id):
+        self.user_id = user_id
         self.project_id = project_id
+        self.start = datetime.now()
 
     def __repr__(self):
         return '<Spell starting at {0} for project {1}>'.\
