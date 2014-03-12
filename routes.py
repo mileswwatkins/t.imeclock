@@ -14,10 +14,10 @@ from forms import RegisterForm, LoginForm, SwitchProjectForm, HistoryDateForm
 
 
 # Set application constants, and create application
-DATABASE = '/tmp/timeclock.db'
+DATABASE = "/tmp/timeclock.db"
 # Issue: after development this DEBUG needs to get turned off, for security
 DEBUG = True
-SECRET_KEY = 'qmTcssHWNArLzQP9LmBJq7Y4hvdfc4'
+SECRET_KEY = "qmTcssHWNArLzQP9LmBJq7Y4hvdfc4"
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -72,14 +72,14 @@ def duration_to_plain_english(duration):
     return duration_text
 
 
-@app.route('/')
+@app.route("/")
 def no_route():
     if current_user.is_authenticated():
-        return redirect('/current')
+        return redirect("/current")
     else:
-        return redirect('/login')
+        return redirect("/login")
 
-@app.route('/register', methods=['POST', 'GET'])
+@app.route("/register", methods=["POST", "GET"])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
@@ -87,26 +87,26 @@ def register():
         session.add(user)
         session.commit()
         login_user(user, remember=True)
-        return redirect('/user_list')
-    return render_template('register.html', form=form)
+        return redirect("/user_list")
+    return render_template("register.html", form=form)
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.route("/login", methods=["POST", "GET"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.email.data).first()
         if user.check_password(form.password.data):
             login_user(user, remember=True)
-            return redirect('/')
-    return render_template('login.html', form=form)
+            return redirect("/")
+    return render_template("login.html", form=form)
 
-@app.route('/logout')
+@app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect('/')
+    return redirect("/")
 
-@app.route('/current', methods=['POST', 'GET'])
+@app.route("/current", methods=["POST", "GET"])
 @login_required
 def current():
     form = SwitchProjectForm()
@@ -162,11 +162,11 @@ def current():
     form.existing_project.choices.sort(key=itemgetter(1))
 
     return render_template(
-            'current.html',
+            "current.html",
             form=form,
             current_spell=current_spell)
 
-@app.route('/history', methods=['POST', 'GET'])
+@app.route("/history", methods=["POST", "GET"])
 @login_required
 def history():
     form = HistoryDateForm()
@@ -198,12 +198,12 @@ def history():
     durations.sort(key=itemgetter(0))
 
     return render_template(
-            'history.html',
+            "history.html",
             form=form,
             durations=durations)
 
 # Return a file containing all of the current user's data
-@app.route('/user_complete_history.csv')
+@app.route("/user_complete_history.csv")
 @login_required
 def generate_csv():
     COLUMNS = ["name", "start", "duration"]
@@ -216,24 +216,24 @@ def generate_csv():
                 attributes.append(str(spell.start))
                 attributes.append(str(spell.duration))
                 yield ",".join(attributes) + "\n"
-    return Response(generate(), mimetype='txt/csv')
+    return Response(generate(), mimetype="txt/csv")
 
-@app.route('/about')
+@app.route("/about")
 def about():
-    return render_template('about.html')
+    return render_template("about.html")
 
 # For development purposes, print a list of all users and their passwords
-@app.route('/user_list')
+@app.route("/user_list")
 def user_list():
-    return render_template('user_list.html', users=User.query.all())
+    return render_template("user_list.html", users=User.query.all())
 
 # For development purposes, print a list of all the projects of a user
-@app.route('/project_list')
+@app.route("/project_list")
 @login_required
 def project_list():
     return render_template(
-            'project_list.html',
+            "project_list.html",
             current_user=current_user)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

@@ -13,7 +13,7 @@ from models import User, Project
 
 # Validator to determine whether a date is in WTForms-compatible format
 def validate_date_formatting(form, field):
-    date_checker = re.compile('\d{4}\-\d{2}-\d{2}')
+    date_checker = re.compile("\d{4}\-\d{2}-\d{2}")
     if not date_checker.match(field.data):
         raise ValidationError("Date must be in yyyy-mm-dd format")
 
@@ -35,20 +35,20 @@ def validate_project_not_in_use(form, field):
 
 # Create a login form
 class LoginForm(Form):
-    email = TextField('Email',
+    email = TextField("Email",
             validators=[Email(message="Must be a valid email address")])
-    password = PasswordField('Password',
+    password = PasswordField("Password",
             validators=[Required(message="You must provide a password")])
 
 # Create a registration form
 class RegisterForm(Form):
-    email = TextField('Email', validators=[
+    email = TextField("Email", validators=[
             Email(message="Must be a valid email address"),
             validate_user_not_in_use])
-    password = PasswordField('Password', validators=[
+    password = PasswordField("Password", validators=[
             Required(message="Must provide a password"),
             EqualTo("confirm_password", message="Passwords must match")])
-    confirm_password = PasswordField('Confirm Password')
+    confirm_password = PasswordField("Confirm Password")
 
 # Create a switch project form
 class SwitchProjectForm(Form):
