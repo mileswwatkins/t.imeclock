@@ -6,7 +6,6 @@ from flask import Flask, Response, g, redirect, render_template, request,\
 from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
 from sqlalchemy import Date, cast, distinct
-from sqlalchemy.sql import func
 
 from database import session
 from models import User, Project, Spell
@@ -178,34 +177,32 @@ def history():
 
     # Include the currently-onling spell in the summed durations
     current_spell = Spell.query.\
-        filter(Spell.user.has(id == current_user.id)).\
         filter(Spell.duration == None).\
+        join(Project).join(User).filter(User.id == current_user.id).\
         first()
     current_spell.duration = datetime.now() - current_spell.start
 
     # Sum the durations by project
-    projects = session.query(Spell.project.name, func.sum(Spell.duration)).\
-            filter(Spell.project.has(id == current_user.id)).\
-            filter(cast(Spell.start, Date) >= start_date).\
-            filter(cast(Spell.start, Date) <= end_date).\
-            group_by(Spell.project_id).all()
+    durations = {}
+    for project in current_user.projects:
+        durations[project.name] = 0
+        for spell in project.spells:
+            if spell.start >= start_date and spell.start <= end_date:
+                durations[project.name] = \
+                        durations[project.name] + spell.duration
+        # Convert summed durations to plain English
+        durations[project.name] = \
+                duration_to_plain_english(durations[project.name])
+
     session.rollback()
 
-    # Convert summed durations to plain English
-    durations = []
-    for project in projects:
-        name = project[0]
-        duration = project[1]
-        duration_text = duration_to_plain_english(duration)
-        durations.append((name, duration_text))
-
     # Sort output alphabetically by project name
-    durations.sort(key=itemgetter(0))
+    sorted_durations = sorted(durations.iteritems(), key=itemgetter(0))
 
     return render_template(
             "history.html",
             form=form,
-            durations=durations)
+            durations=sorted_durations)
 
 # Return a file containing all of the current user's data
 @app.route("/user_complete_history.csv")
