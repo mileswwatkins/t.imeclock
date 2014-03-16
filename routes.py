@@ -180,21 +180,23 @@ def history():
         filter(Spell.duration == None).\
         join(Project).join(User).filter(User.id == current_user.id).\
         first()
-    current_spell.duration = datetime.now() - current_spell.start
 
-    # Sum the durations by project
-    durations = {}
-    for project in current_user.projects:
-        durations[project.name] = 0
-        for spell in project.spells:
-            if spell.start >= start_date and spell.start <= end_date:
-                durations[project.name] = \
-                        durations[project.name] + spell.duration
-        # Convert summed durations to plain English
-        durations[project.name] = \
-                duration_to_plain_english(durations[project.name])
+    if current_spell:
+        current_spell.duration = datetime.now() - current_spell.start
 
-    session.rollback()
+        # Sum the durations by project
+        durations = {}
+        for project in current_user.projects:
+            durations[project.name] = 0
+            for spell in project.spells:
+                if spell.start >= start_date and spell.start <= end_date:
+                    durations[project.name] = \
+                            durations[project.name] + spell.duration
+            # Convert summed durations to plain English
+            durations[project.name] = \
+                    duration_to_plain_english(durations[project.name])
+
+        session.rollback()
 
     # Sort output alphabetically by project name
     sorted_durations = sorted(durations.iteritems(), key=itemgetter(0))
