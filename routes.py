@@ -136,22 +136,22 @@ def current():
             form.existing_project.choices.append(
                     (current_spell.project_id, current_spell.project.name))
 
-        # If user selected an existing project, retrieve that project's name
-        if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
+        # If the user wants to start on a new project, create it
+        if form.new_project.data:
+            current_project = Project(
+                    user_id=current_user.id, 
+                    name=form.new_project.data)
+            # Add this to the projects table
+            session.add(current_project)
+
+        # Otherwise, if user selected an existing project, identify it
+        else:
             current_project = Project.query.\
                     filter(Project.id == form.existing_project.data).\
                     first()
             # Remove this project from the form selection drop-down
             form.existing_project.choices.remove(
                     (current_project.id, current_project.name))
-
-        # If the user wants to start on a new project, use that name instead
-        else:
-            current_project = Project(
-                    user_id=current_user.id, 
-                    name=form.new_project.data)
-            # Add this to the projects table
-            session.add(current_project)
 
         # Create a new database record for that project name
         current_spell = Spell(project_id=current_project.id)
