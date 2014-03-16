@@ -63,6 +63,7 @@ class Spell(Base):
     
     def __init__(self, project_id):
         self.project_id = project_id
+        # Assign start time based on when the spell is initialized
         self.start = datetime.now()
 
     def __repr__(self):

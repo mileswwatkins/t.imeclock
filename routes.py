@@ -112,8 +112,8 @@ def logout():
 def current():
     form = SwitchProjectForm()
     current_spell = Spell.query.\
-            filter(Spell.project.user == current_user).\
             filter(Spell.duration == None).\
+            join(Project).join(User).filter(User.id == current_user.id).\
             first()
 
     # Generate a list of existing projects from which user can choose
@@ -133,7 +133,7 @@ def current():
             current_spell.duration = datetime.now() - current_spell.start
             # Add this project to the form selection drop-down
             form.existing_project.choices.append(
-                    (current_spell.project.id, current_spell.project.name))
+                    (current_spell.project_id, current_spell.project.name))
 
         # If user selected an existing project, retrieve that project's name
         if form.existing_project.data != DEFAULT_CHOICE_NO_PROJECT[0]:
@@ -145,7 +145,6 @@ def current():
                     (current_project.id, current_project.name))
 
         # If the user wants to start on a new project, use that name instead
-        # Issue: need to forbid user from using one of their existing names
         else:
             current_project = Project(
                     user_id=current_user.id, 
@@ -179,10 +178,11 @@ def history():
 
     # Include the currently-onling spell in the summed durations
     current_spell = Spell.query.\
-        filter(Spell.duration == None).\
-        join(Project).join(User).filter(User.id == current_user.id).\
-        first()
+            filter(Spell.duration == None).\
+            join(Project).join(User).filter(User.id == current_user.id).\
+            first()
 
+    # If a user has worked on at least one project, continue to process them
     if current_spell:
         current_spell.duration = datetime.now() - current_spell.start
 

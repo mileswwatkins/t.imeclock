@@ -11,11 +11,12 @@ from database import session
 from models import User, Project
 
 
+# Issue: no error text is shown to the user when this validator fails
 # Validator to determine whether a date is in WTForms-compatible format
 def validate_date_formatting(form, field):
     date_checker = re.compile("\d{4}\-\d{2}-\d{2}")
     if not date_checker.match(field.data):
-        raise ValidationError("Date must be in yyyy-mm-dd format")
+        raise ValidationError("Dates must be in yyyy-mm-dd format")
 
 # Validator to prevent the re-use of an email address during registration
 def validate_user_not_in_use(form, field):
