@@ -144,7 +144,7 @@ def current():
             # Add this to the projects table
             session.add(current_project)
 
-        # Otherwise, if user selected an existing project, identify it
+        # Otherwise, identify the existing project the user selected
         else:
             current_project = Project.query.\
                     filter(Project.id == form.existing_project.data).\

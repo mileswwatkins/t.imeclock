@@ -17,12 +17,3 @@ session = scoped_session(sessionmaker(
         ))
 Base = declarative_base()
 Base.query = session.query_property()
-
-# Function to initialize the database
-def init_db():
-    """Run to initiate database for the program."""
-    from models import User, Project
-    Base.metadata.create_all(bind=engine)
-
-if __name__ == "__main__":
-	init_db()
