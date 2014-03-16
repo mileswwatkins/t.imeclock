@@ -121,7 +121,7 @@ def current():
     # Issue: allow user to take a break, not working on any project
     # Issue: allow user to stop working for the day
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
-    if current_user.projects:
+    if current_spell:
         for project in current_user.projects:
             # Remove current project from the set of choices
             if project != current_spell.project:
