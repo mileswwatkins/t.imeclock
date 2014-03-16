@@ -175,6 +175,8 @@ def history():
     start_date = form.start_date.data
     end_date = form.end_date.data
 
+    durations = {}
+
     # Include the currently-onling spell in the summed durations
     current_spell = Spell.query.\
         filter(Spell.duration == None).\
@@ -185,7 +187,6 @@ def history():
         current_spell.duration = datetime.now() - current_spell.start
 
         # Sum the durations by project
-        durations = {}
         for project in current_user.projects:
             durations[project.name] = 0
             for spell in project.spells:
