@@ -117,7 +117,7 @@ def current():
             first()
 
     # Generate a list of existing projects from which user can choose
-    DEFAULT_CHOICE_NO_PROJECT = (-1, "")
+    DEFAULT_CHOICE_NO_PROJECT = (0, "")
     # Issue: allow user to take a break, not working on any project
     # Issue: allow user to stop working for the day
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
