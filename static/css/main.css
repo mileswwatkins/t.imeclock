@@ -19,13 +19,12 @@ header {
   background-color: #FF9900;
   height: 32px;
   width: 100%;
-  opacity: .9;
   margin-bottom: 10px;
 }
  
 header h1.logo {
   margin: 0;
-  font-size: 1.7em;
+  font-size: 24pt;
   color: #000000;
   text-transform: uppercase;
   float: left;
