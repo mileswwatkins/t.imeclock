@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12pt;
   color: #444;
   background-color: #F8F8F8;
 }
@@ -17,9 +18,9 @@ a:hover, a:visited, a:link, a:active {
   
 header {
   background-color: #FF9900;
-  height: 32px;
+  height: 38px;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
  
 header h1.logo {
@@ -36,7 +37,8 @@ header h1.logo {
 
 .menu {
   float: right;
-  margin-top: 8px;
+  margin-top: 12px;
+  font-size: 12pt;
 }
 
 .menu li {
@@ -60,34 +62,10 @@ header h1.logo {
   width: 960px;
   margin: 0 auto;
 }
- 
-div.jumbo {
-  padding: 10px 0 30px 0;
-  background-color: #eeeeee;
-  -webkit-border-radius: 6px;
-     -moz-border-radius: 6px;
-          border-radius: 6px;
-}
- 
-h2 {
-  font-size: 3em;
-  margin-top: 40px;
-  text-align: center;
-  letter-spacing: -2px;
-}
- 
-h3 {
-  font-size: 1.7em;
-  font-weight: 100;
-  margin-top: 30px;
-  text-align: center;
-  letter-spacing: -1px;
-  color: #999;
-}
 
 /*
  * Style tables
-*/
+ */
 
 table {
   border-collapse: collapse;
@@ -100,4 +78,20 @@ table, th, td {
 
 th, td {
   padding:6px;
+}
+
+/*
+ * Style buttons
+ */
+input.submit {
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #FF9900;
+  border: 2px solid #4a5032;
+  display: inline-block;
+  margin: auto;
+  padding: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
