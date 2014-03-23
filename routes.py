@@ -126,13 +126,19 @@ def current():
                 form_choices.append((project.id, project.name))
     form.existing_project.choices = form_choices
 
-    if request.form["stop"]:
-        
+    # If the user is currently working, they have an option to stop working
+    if request.form["button"] == "Or stop working":
+        current_spell.duration = datetime.now() - current_spell.start
+        # Add this project to the form selection drop-down
+        form.existing_project.choices.append(
+                (current_spell.project_id, current_spell.project.name))
+        current_spell = None
+
+    # Otherwise, the user can choose a new or existing project to work on
     elif form.validate_on_submit():
         # Close the current project, if one exists
         if current_spell:
             current_spell.duration = datetime.now() - current_spell.start
-            # Add this project to the form selection drop-down
             form.existing_project.choices.append(
                     (current_spell.project_id, current_spell.project.name))
 
