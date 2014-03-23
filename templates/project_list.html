@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <p> user: {{ current_user.email }} (id: current_user.id)</p>
+    <p> user: {{ current_user.email }} (id: {{ current_user.id }})</p>
 
     <ul>
         {% for project in current_user.projects %}
