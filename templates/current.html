@@ -25,4 +25,8 @@
 
         <input class=submit type="submit" value="Start on this project now!">
     </form>
+
+    {% if current_spell %}
+        <input class=submit type="submit" value="Or stop working" name="stop">
+    {% endif %}
 {% endblock %}

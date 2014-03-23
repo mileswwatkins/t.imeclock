@@ -118,8 +118,6 @@ def current():
 
     # Generate a list of existing projects from which user can choose
     DEFAULT_CHOICE_NO_PROJECT = (0, "")
-    # Issue: allow user to take a break, not working on any project
-    # Issue: allow user to stop working for the day
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
     if current_spell:
         for project in current_user.projects:
@@ -128,7 +126,9 @@ def current():
                 form_choices.append((project.id, project.name))
     form.existing_project.choices = form_choices
 
-    if form.validate_on_submit():
+    if request.form["stop"]:
+        
+    elif form.validate_on_submit():
         # Close the current project, if one exists
         if current_spell:
             current_spell.duration = datetime.now() - current_spell.start
