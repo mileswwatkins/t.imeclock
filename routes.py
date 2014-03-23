@@ -127,7 +127,7 @@ def current():
     form.existing_project.choices = form_choices
 
     # If the user is currently working, they have an option to stop working
-    if request.form["button"] == "Or stop working":
+    if request.form.get("button") == "Or stop working":
         current_spell.duration = datetime.now() - current_spell.start
         # Add this project to the form selection drop-down
         form.existing_project.choices.append(

@@ -23,10 +23,10 @@
             {% endfor %}</ul>
         {% endif %}
 
-        <input class=submit type="submit" value="Start on this project now!">
-    </form>
+        <input class=submit type="submit" value="Start on this project now!" name="button">
 
-    {% if current_spell %}
-        <input class=submit type="submit" value="Or stop working" name="button">
-    {% endif %}
+        {% if current_spell %}
+            <input class=submit type="submit" value="Or stop working" name="button">
+        {% endif %}
+    </form>
 {% endblock %}
