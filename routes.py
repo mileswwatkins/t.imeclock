@@ -127,7 +127,7 @@ def current():
     form.existing_project.choices = form_choices
 
     # If the user is currently working, they have an option to stop working
-    if request.form.get("button") == "Or stop working":
+    if request.form.get("button") == "… or stop working":
         current_spell.duration = datetime.now() - current_spell.start
         # Add this project to the form selection drop-down
         form.existing_project.choices.append(
@@ -234,6 +234,7 @@ def generate_csv():
 def about():
     return render_template("about.html")
 
+# Issue: remove these for security purposes
 # For development purposes, print a list of all users and their passwords
 @app.route("/user_list")
 def user_list():
@@ -246,6 +247,11 @@ def project_list():
     return render_template(
             "project_list.html",
             current_user=current_user)
+
+# For development purposes, print a list of all spells
+@app.route("/spell_list")
+def spell_list():
+    return render_template("spell_list.html", spells=Spell.query.all())
 
 if __name__ == "__main__":
     app.run()

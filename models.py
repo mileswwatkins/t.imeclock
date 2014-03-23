@@ -68,4 +68,4 @@ class Spell(Base):
 
     def __repr__(self):
         return "<Spell starting at {0} for project {1}>".\
-                format(self.name, self.project_id)
+                format(self.start, self.project_id)

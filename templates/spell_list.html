@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    {% if spells %}
+        <ul> {% for spell in spells %}
+            <li> {{ spell }} </li>
+        {% endfor %} </ul>
+    {% endif %}
+
+{% endblock %}
