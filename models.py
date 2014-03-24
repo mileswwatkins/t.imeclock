@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Interval, String
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref, relationship
 
 from database import Base
@@ -59,7 +60,14 @@ class Spell(Base):
     id = Column(Integer, primary_key=True)
     project_id = Column(Integer, ForeignKey("projects.id"))
     start = Column(DateTime, nullable=False)
-    duration = Column(Interval)
+    end = Column(DateTime)
+
+    @hybrid_property
+    def duration(self):
+        if self.end:
+            return self.end - self.start
+        else:
+            return datetime.now() - self.start
     
     def __init__(self, project_id):
         self.project_id = project_id

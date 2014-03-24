@@ -112,7 +112,7 @@ def logout():
 def current():
     form = SwitchProjectForm()
     current_spell = Spell.query.\
-            filter(Spell.duration == None).\
+            filter(Spell.end == None).\
             join(Project).join(User).filter(User.id == current_user.id).\
             first()
 
@@ -128,7 +128,7 @@ def current():
 
     # If the user is currently working, they have an option to stop working
     if request.form.get("button") == "... or stop working":
-        current_spell.duration = datetime.now() - current_spell.start
+        current_spell.end = datetime.now()
         # Add this project to the form selection drop-down
         form.existing_project.choices.append(
                 (current_spell.project_id, current_spell.project.name))
@@ -138,7 +138,7 @@ def current():
     elif form.validate_on_submit():
         # Close the current project, if one exists
         if current_spell:
-            current_spell.duration = datetime.now() - current_spell.start
+            current_spell.end = datetime.now()
             form.existing_project.choices.append(
                     (current_spell.project_id, current_spell.project.name))
 
@@ -149,8 +149,6 @@ def current():
                     name=form.new_project.data)
             # Add this to the projects table
             session.add(current_project)
-            
-            raise Exception(current_project)
 
         # Otherwise, identify the existing project the user selected
         else:
@@ -185,28 +183,19 @@ def history():
 
     durations = {}
 
-    # Include the currently-onling spell in the summed durations
-    current_spell = Spell.query.\
-            filter(Spell.duration == None).\
-            join(Project).join(User).filter(User.id == current_user.id).\
-            first()
-
-    # If a user has worked on at least one project, continue to process them
-    if current_spell:
-        current_spell.duration = datetime.now() - current_spell.start
-
-        # Sum the durations by project
-        for project in current_user.projects:
-            durations[project.name] = 0
-            for spell in project.spells:
-                if spell.start >= start_date and spell.start <= end_date:
-                    durations[project.name] = \
-                            durations[project.name] + spell.duration
-            # Convert summed durations to plain English
-            durations[project.name] = \
-                    duration_to_plain_english(durations[project.name])
-
-        session.rollback()
+    # If a user has worked at all, sum their durations by project
+    for project in current_user.projects:
+        durations[project.name] = 0
+        for spell in project.spells:
+            # Make a special case for the currently-ongoing project
+            if (spell.start >= start_date and spell.end <= end_date) or \
+                    (spell.start >= start_date and spell.end == None and
+                    datetime.now <= end_date):
+                durations[project.name] = \
+                        durations[project.name] + spell.duration
+        # Convert summed durations to plain English
+        durations[project.name] = \
+                duration_to_plain_english(durations[project.name])
 
     # Sort output alphabetically by project name
     sorted_durations = sorted(durations.iteritems(), key=itemgetter(0))
@@ -220,7 +209,7 @@ def history():
 @app.route("/user_complete_history.csv")
 @login_required
 def generate_csv():
-    COLUMNS = ["name", "start", "duration"]
+    COLUMNS = ["name", "start", "end", "duration"]
     def generate():
         yield ",".join(COLUMNS) + "\n"
         for project in current_user.projects:
@@ -228,6 +217,7 @@ def generate_csv():
                 attributes = []
                 attributes.append(spell.project.name)
                 attributes.append(str(spell.start))
+                attributes.append(str(spell.end))
                 attributes.append(str(spell.duration))
                 yield ",".join(attributes) + "\n"
     return Response(generate(), mimetype="txt/csv")
