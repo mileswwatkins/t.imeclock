@@ -97,3 +97,10 @@ input.submit {
   margin-right: 5px;
   margin-bottom: 1px;
 }
+
+/*
+ * Style headers
+ */
+.error {
+  font-weight: bold;
+}

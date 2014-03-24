@@ -149,6 +149,8 @@ def current():
                     name=form.new_project.data)
             # Add this to the projects table
             session.add(current_project)
+            
+            raise Exception(current_project)
 
         # Otherwise, identify the existing project the user selected
         else:
@@ -244,9 +246,7 @@ def user_list():
 @app.route("/project_list")
 @login_required
 def project_list():
-    return render_template(
-            "project_list.html",
-            current_user=current_user)
+    return render_template("project_list.html", current_user=current_user)
 
 # For development purposes, print a list of all spells
 @app.route("/spell_list")
