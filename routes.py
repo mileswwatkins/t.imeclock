@@ -237,9 +237,8 @@ def user_list():
 
 # For development purposes, print a list of all the projects of a user
 @app.route("/project_list")
-@login_required
 def project_list():
-    return render_template("project_list.html", current_user=current_user)
+    return render_template("project_list.html", projects=Project.query.all())
 
 # For development purposes, print a list of all spells
 @app.route("/spell_list")

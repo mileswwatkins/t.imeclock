@@ -2,14 +2,10 @@
 
 {% block content %}
 
-    <p> user: {{ current_user.email }} (id: {{ current_user.id }})</p>
-
-    <ul>
-        {% for project in current_user.projects %}
-            {% for spell in project.spells %}
-                <li> {{ spell.project.name}}, start={{ spell.start}}, duration={{ spell.duration }} </li>
-            {% endfor %}
-        {% endfor %}
-    </ul>
+    {% if projects %}
+        <ul> {% for project in projects %}
+            <li> {{ project }} </li>
+        {% endfor %} </ul>
+    {% endif %}
 
 {% endblock %}
