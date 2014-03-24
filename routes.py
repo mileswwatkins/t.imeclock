@@ -149,6 +149,7 @@ def current():
                     name=form.new_project.data)
             # Add this to the projects table
             session.add(current_project)
+            print(current_project)
 
         # Otherwise, identify the existing project the user selected
         else:
@@ -162,6 +163,8 @@ def current():
         # Create a new database record for that project name
         current_spell = Spell(project_id=current_project.id)
         session.add(current_spell)
+        print(current_project)
+        print(current_spell)
 
         session.commit()
 

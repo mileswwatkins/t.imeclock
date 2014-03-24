@@ -77,13 +77,15 @@ table, th, td {
 }
 
 th, td {
-  padding:6px;
+  padding: 6px;
 }
 
 /*
  * Style buttons
  */
 input.submit {
+  font-size: 11px;
+  font-weight: bold;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -96,11 +98,4 @@ input.submit {
   margin-left: 5px;
   margin-right: 5px;
   margin-bottom: 1px;
-}
-
-/*
- * Style headers
- */
-.error {
-  font-weight: bold;
 }

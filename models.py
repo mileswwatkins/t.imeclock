@@ -52,7 +52,8 @@ class Project(Base):
         self.name = name
 
     def __repr__(self):
-        return "<Project {0} for user {1}>".format(self.name, self.user_id)
+        return "<Project {0} (id {1}) for user {2}>".\
+                format(self.name, self.id, self.user_id)
 
 
 class Spell(Base):
