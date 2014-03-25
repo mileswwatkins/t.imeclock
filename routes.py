@@ -150,7 +150,6 @@ def current():
             # Add this to the projects table
             session.add(current_project)
             session.flush()
-            print(current_project)
 
         # Otherwise, identify the existing project the user selected
         else:
@@ -164,8 +163,6 @@ def current():
         # Create a new database record for that project name
         current_spell = Spell(project_id=current_project.id)
         session.add(current_spell)
-        print(current_project)
-        print(current_spell)
 
         session.commit()
 
@@ -191,9 +188,13 @@ def history():
     for project in current_user.projects:
         durations[project.name] = 0
         for spell in project.spells:
+            spell_start_date = cast(spell.start, Date)
+            spell_end_date = cast(spell.end, Date)
             # Make a special case for the currently-ongoing project
-            if (spell.start >= start_date and spell.end <= end_date) or \
-                    (spell.start >= start_date and spell.end == None and
+            if (spell_start_date >= start_date and \
+                    spell_end_date <= end_date) or \
+                    (spell_start_date >= start_date and \
+                    spell_end_date == None and \
                     datetime.now <= end_date):
                 durations[project.name] = \
                         durations[project.name] + spell.duration
