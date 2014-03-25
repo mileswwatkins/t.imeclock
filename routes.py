@@ -188,13 +188,11 @@ def history():
     for project in current_user.projects:
         durations[project.name] = 0
         for spell in project.spells:
-            spell_start_date = cast(spell.start, Date)
-            spell_end_date = cast(spell.end, Date)
             # Make a special case for the currently-ongoing project
-            if (spell_start_date >= start_date and \
-                    spell_end_date <= end_date) or \
-                    (spell_start_date >= start_date and \
-                    spell_end_date == None and \
+            if (cast(spell.start, Date) >= start_date and \
+                    cast(spell.end, Date) <= end_date) or \
+                    (cast(spell.start, Date) >= start_date and \
+                    cast(spell.end, Date) == None and \
                     datetime.now <= end_date):
                 durations[project.name] = \
                         durations[project.name] + spell.duration
