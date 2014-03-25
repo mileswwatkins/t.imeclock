@@ -149,6 +149,7 @@ def current():
                     name=form.new_project.data)
             # Add this to the projects table
             session.add(current_project)
+            session.flush()
             print(current_project)
 
         # Otherwise, identify the existing project the user selected
