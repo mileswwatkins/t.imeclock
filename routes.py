@@ -5,7 +5,7 @@ from flask import Flask, Response, g, redirect, render_template, request,\
         url_for
 from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
-from sqlalchemy import Date, cast, distinct
+from sqlalchemy import distinct
 
 from database import session
 from models import User, Project, Spell
@@ -189,11 +189,11 @@ def history():
         durations[project.name] = 0
         for spell in project.spells:
             # Make a special case for the currently-ongoing project
-            if (cast(spell.start, Date) >= start_date and \
-                    cast(spell.end, Date) <= end_date) or \
-                    (cast(spell.start, Date) >= start_date and \
-                    cast(spell.end, Date) == None and \
-                    datetime.now <= end_date):
+            if (spell.start.date >= start_date and
+                    spell.end.date <= end_date) or \
+                    (spell.start.date >= start_date and
+                    spell.end.date == None and
+                    date.today <= end_date):
                 durations[project.name] = \
                         durations[project.name] + spell.duration
         # Convert summed durations to plain English
