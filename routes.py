@@ -190,11 +190,11 @@ def history():
         for spell in project.spells:
             # Make a special case for the currently-ongoing project
             if spell.end == None:
-                if spell.start.date() >= start_date and \
+                if start_date <= spell.start.date() <= \
                         date.today() <= end_date:
                     durations[project.name] += spell.duration
             else:
-                if spell.start.date() >= start_date and \
+                if start_date <= spell.start.date() <= \
                         spell.end.date() <= end_date:
                     durations[project.name] += spell.duration
         # Convert summed durations to plain English
