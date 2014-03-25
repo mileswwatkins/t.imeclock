@@ -77,5 +77,5 @@ class Spell(Base):
         self.start = datetime.now()
 
     def __repr__(self):
-        return "<Spell starting at {0} for project {1}>".\
-                format(self.start, self.project_id)
+        return "<Spell from {0} to {1} for project {2}>".\
+                format(self.start, self.end, self.project_id)
