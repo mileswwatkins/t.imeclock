@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 from operator import itemgetter
 
 from flask import Flask, Response, g, redirect, render_template, request,\
@@ -190,10 +190,12 @@ def history():
         for spell in project.spells:
             # Make a special case for the currently-ongoing project
             if spell.end == None:
-                if start_date <= spell.start.date():
+                if start_date <= spell.start.date() <= \
+                        date.today() <= end_date:
                     durations[project.name] += spell.duration
             else:
-                if start_date <= spell.start.date():
+                if start_date <= spell.start.date() <= \
+                        spell.end.date() <= end_date:
                     durations[project.name] += spell.duration
         # Convert summed durations to plain English
         durations[project.name] = \
