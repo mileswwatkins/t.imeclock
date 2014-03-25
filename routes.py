@@ -186,7 +186,7 @@ def history():
 
     # If a user has worked at all, sum their durations by project
     for project in current_user.projects:
-        durations[project.name] = 0
+        durations[project.name] = timedelta(0)
         for spell in project.spells:
             # Make a special case for the currently-ongoing project
             if spell.end == None:
