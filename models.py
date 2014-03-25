@@ -21,7 +21,8 @@ class User(Base):
         self.password = generate_password_hash(password)
 
     def __repr__(self):
-        return "<User {}>".format(self.email)
+        return "<User {0} (hashed password: {1})>".\
+                format(self.email, self.password)
 
     def is_authenticated(self):
         return True

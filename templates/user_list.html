@@ -4,7 +4,7 @@
 
     {% if users %}
         <ul> {% for user in users %}
-            <li> {{ user.email }} (hashed password: {{ user.password }}) </li>
+            <li> {{ user }} </li>
         {% endfor %} </ul>
     {% endif %}
 

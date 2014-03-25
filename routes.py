@@ -88,7 +88,7 @@ def register():
         session.add(user)
         session.commit()
         login_user(user, remember=True)
-        return redirect("/user_list")
+        return redirect("/view_all_tables")
     return render_template("register.html", form=form)
 
 @app.route("/login", methods=["POST", "GET"])
@@ -229,21 +229,15 @@ def generate_csv():
 def about():
     return render_template("about.html")
 
-# Issue: remove these for security purposes
-# For development purposes, print a list of all users and their passwords
-@app.route("/user_list")
-def user_list():
-    return render_template("user_list.html", users=User.query.all())
+# Issue: remove this after main development, for security purposes
+# For development purposes, view all tables in the database
+@app.route("/view_all_tables")
+def view_all_tables():
+    return render_template("view_all_tables.html",
+            users=User.query.all(),
+            projects=Project.query.all(),
+            spells=Spell.query.all())
 
-# For development purposes, print a list of all the projects of a user
-@app.route("/project_list")
-def project_list():
-    return render_template("project_list.html", projects=Project.query.all())
-
-# For development purposes, print a list of all spells
-@app.route("/spell_list")
-def spell_list():
-    return render_template("spell_list.html", spells=Spell.query.all())
 
 if __name__ == "__main__":
     app.run()
