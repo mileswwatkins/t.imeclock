@@ -15,19 +15,9 @@ from models import User, Project
 # Validator to determine whether a date is in WTForms-compatible format
 def validate_date_formatting(form, field):
     message = "Dates must be in yyyy-mm-dd format"
-
     checker = re.compile("(\d{4})\-(\d{2})\-(\d{2})")
     match = checker.search(str(field.data))
-
-    if match:
-        try:
-            month = int(match.groups()[1])
-            day = int(match.groups()[2])
-            if not 1 <= month <= 12 or not 1 <= day <= 31:
-                raise ValidationError(message)
-        except:
-            raise ValidationError(message)
-    else:
+    if not match:
         raise ValidationError(message)
 
 # Validator to prevent the re-use of an email address during registration
