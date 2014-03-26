@@ -178,6 +178,7 @@ def current():
 @login_required
 def history():
     form = HistoryDateForm()
+    sorted_durations = []
 
     if form.validate_on_submit():
         start_date = form.start_date.data
