@@ -18,11 +18,14 @@ def validate_date_formatting(form, field):
 
     checker = re.compile("(\d{4})\-(\d{2})\-(\d{2})")
     match = date_checker.search()
-    
+
     if match:
-        month = int(match.groups()[1])
-        day = int(match.groups()[2])
-        if not 1 <= month <= 12 or not 1 <= day <= 31:
+        try:
+            month = int(match.groups()[1])
+            day = int(match.groups()[2])
+            if not 1 <= month <= 12 or not 1 <= day <= 31:
+                raise ValidationError(message)
+        except:
             raise ValidationError(message)
     else:
         raise ValidationError(message)
