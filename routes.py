@@ -179,30 +179,31 @@ def current():
 def history():
     form = HistoryDateForm()
 
-    start_date = form.start_date.data
-    end_date = form.end_date.data
+    if form.validate_on_submit():
+        start_date = form.start_date.data
+        end_date = form.end_date.data
 
-    durations = {}
+        durations = {}
 
-    # If a user has worked at all, sum their durations by project
-    for project in current_user.projects:
-        durations[project.name] = timedelta(0)
-        for spell in project.spells:
-            # Make a special case for the currently-ongoing project
-            if spell.end == None:
-                if start_date <= spell.start.date() <= \
-                        date.today() <= end_date:
-                    durations[project.name] += spell.duration
-            else:
-                if start_date <= spell.start.date() <= \
-                        spell.end.date() <= end_date:
-                    durations[project.name] += spell.duration
-        # Convert summed durations to plain English
-        durations[project.name] = \
-                duration_to_plain_english(durations[project.name])
+        # If a user has worked at all, sum their durations by project
+        for project in current_user.projects:
+            durations[project.name] = timedelta(0)
+            for spell in project.spells:
+                # Make a special case for the currently-ongoing project
+                if spell.end == None:
+                    if start_date <= spell.start.date() <= \
+                            date.today() <= end_date:
+                        durations[project.name] += spell.duration
+                else:
+                    if start_date <= spell.start.date() <= \
+                            spell.end.date() <= end_date:
+                        durations[project.name] += spell.duration
+            # Convert summed durations to plain English
+            durations[project.name] = \
+                    duration_to_plain_english(durations[project.name])
 
-    # Sort output alphabetically by project name
-    sorted_durations = sorted(durations.iteritems(), key=itemgetter(0))
+        # Sort output alphabetically by project name
+        sorted_durations = sorted(durations.iteritems(), key=itemgetter(0))
 
     return render_template(
             "history.html",
