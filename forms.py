@@ -17,7 +17,7 @@ def validate_date_formatting(form, field):
     message = "Dates must be in yyyy-mm-dd format"
 
     checker = re.compile("(\d{4})\-(\d{2})\-(\d{2})")
-    match = checker.search(field.data)
+    match = checker.search(str(field.data))
 
     if match:
         try:
