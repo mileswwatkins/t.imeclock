@@ -195,7 +195,7 @@ def history():
                     durations[project.name] += spell.duration
             else:
                 if start_date <= spell.start.date() <= \
-                        spell.end.date().date() <= end_date:
+                        spell.end.date() <= end_date:
                     durations[project.name] += spell.duration
         # Convert summed durations to plain English
         durations[project.name] = \

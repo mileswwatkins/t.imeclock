@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 import re
 
 from flask.ext.login import current_user
@@ -14,8 +14,9 @@ from models import User, Project
 # Issue: no error text is shown to the user when this validator fails
 # Validator to determine whether a date is in WTForms-compatible format
 def validate_date_formatting(form, field):
-    date_checker = re.compile("\d{4}\-\d{2}-\d{2}")
-    if not date_checker.match(field.data):
+    date_checker = re.compile("\d{4}\-\d{2}\-\d{2}")
+    match = date_checker.match(field.data)
+    if not match:
         raise ValidationError("Dates must be in yyyy-mm-dd format")
 
 # Validator to prevent the re-use of an email address during registration
@@ -73,5 +74,5 @@ class HistoryDateForm(Form):
             default=date(2014, 1, 1), validators=[
             Required("Start date required"), validate_date_formatting])
     end_date = DateField("End Date",
-            default=datetime.today(), validators=[
+            default=date.today(), validators=[
             Required("End date required"), validate_date_formatting])
