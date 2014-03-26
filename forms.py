@@ -82,8 +82,6 @@ class SwitchProjectForm(Form):
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
     start_date = DateField("Start Date",
-            default=date(2014, 1, 1), validators=[
-            Required("Start date required"), validate_date_formatting])
+            default=date(2014, 1, 1), validators=[validate_date_formatting])
     end_date = DateField("End Date",
-            default=date.today(), validators=[
-            Required("End date required"), validate_date_formatting])
+            default=date.today(), validators=[validate_date_formatting])
