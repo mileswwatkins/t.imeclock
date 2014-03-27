@@ -11,15 +11,6 @@ from database import session
 from models import User, Project
 
 
-# Issue: no error text is shown to the user when this validator fails
-# Validator to determine whether a date is in WTForms-compatible format
-def validate_date_formatting(form, field):
-    message = "Dates must be in yyyy-mm-dd format"
-    checker = re.compile("(\d{4})\-(\d{2})\-(\d{2})")
-    match = checker.search(str(field.data))
-    if not match:
-        raise ValidationError(message)
-
 # Validator to prevent the re-use of an email address during registration
 def validate_user_not_in_use(form, field):
     email_in_use = User.query.filter(User.email == field.data).first()
@@ -71,7 +62,5 @@ class SwitchProjectForm(Form):
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
-    start_date = DateField("Start Date",
-            default=date(2014, 1, 1), validators=[validate_date_formatting])
-    end_date = DateField("End Date",
-            default=date.today(), validators=[validate_date_formatting])
+    start_date = DateField("Start Date", default=date(2014, 1, 1))
+    end_date = DateField("End Date", default=date.today())
