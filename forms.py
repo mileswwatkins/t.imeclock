@@ -3,9 +3,10 @@ import re
 
 from flask.ext.login import current_user
 from flask_wtf import Form
-from wtforms import DateField, PasswordField, SelectField, TextField
+from wtforms import PasswordField, SelectField, TextField
 from wtforms.validators import Email, EqualTo, Length, Required,\
         ValidationError
+from wtforms.ext.dateutil.fields import DateField
 
 from database import session
 from models import User, Project
