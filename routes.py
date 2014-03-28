@@ -5,6 +5,7 @@ from flask import Flask, Response, g, redirect, render_template, request,\
         url_for
 from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
+from flask.ext.mail import Mail, Message
 from sqlalchemy import distinct
 
 from database import session
@@ -25,6 +26,9 @@ app.config.from_object(__name__)
 lm = LoginManager()
 lm.init_app(app)
 lm.login_view = "login"
+
+# Configure mail manager
+mail = Mail(app)
 
 # Remove the database session at the end of a request or at shutdown
 @app.teardown_appcontext
@@ -82,13 +86,19 @@ def no_route():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        # Issue: set up an email verification system to confirm this
-        # Issue: implement a CAPTCHA to protect against illicit accounts
+        activation_link = ""
+        email_account_confirmation = Message(
+                subject="Confirm Your T.imeclock Account",
+                body="Please confirm your account by clicking on this link:" +\
+                activation_link,
+                sender=("T.imeclock Admin", "miles.w.watkins@gmail.com"),
+                recipients=[form.email.data])
+        mail.send(email_account_confirmation)
         user = User(email=form.email.data, password=form.password.data)
         session.add(user)
         session.commit()
         login_user(user, remember=True)
-        return redirect("/view_all_tables")
+        return redirect("/")
     return render_template("register.html", form=form)
 
 @app.route("/login", methods=["POST", "GET"])
