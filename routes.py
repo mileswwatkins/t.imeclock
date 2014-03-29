@@ -86,7 +86,12 @@ def no_route():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        activation_link = ""
+        user = User(email=form.email.data, password=form.password.data)
+        session.add(user)
+        session.commit()
+        login_user(user, remember=True)
+
+        activation_code = user.password[-15:]
         email_account_confirmation = Message(
                 subject="Confirm Your T.imeclock Account",
                 body="Please confirm your account by clicking on this link:" +\
@@ -94,10 +99,7 @@ def register():
                 sender=("T.imeclock Admin", "miles.w.watkins@gmail.com"),
                 recipients=[form.email.data])
         mail.send(email_account_confirmation)
-        user = User(email=form.email.data, password=form.password.data)
-        session.add(user)
-        session.commit()
-        login_user(user, remember=True)
+
         return redirect("/")
     return render_template("register.html", form=form)
 
