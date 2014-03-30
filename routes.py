@@ -5,7 +5,7 @@ from flask import Flask, Response, g, redirect, render_template, request,\
         url_for
 from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
-from flask.ext.mail import Mail, Message
+from flaskext.mail import Mail, Message
 from sqlalchemy import distinct
 
 from database import session
