@@ -223,11 +223,12 @@ def history():
             form=form,
             durations=sorted_durations)
 
+# Issue: view appears to be broken, and only exports the header row
 # Return a file containing all of the current user's data
 @app.route("/user_complete_history.csv")
 @login_required
 def generate_csv():
-    COLUMNS = ["name", "start", "end", "duration"]
+    COLUMNS = ["name", "start", "end"]
     def generate():
         yield ",".join(COLUMNS) + "\n"
         for project in current_user.projects:
@@ -236,7 +237,6 @@ def generate_csv():
                 attributes.append(spell.project.name)
                 attributes.append(str(spell.start))
                 attributes.append(str(spell.end))
-                attributes.append(str(spell.duration))
                 yield ",".join(attributes) + "\n"
     return Response(generate(), mimetype="txt/csv")
 
