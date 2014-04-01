@@ -53,7 +53,7 @@ class Project(Base):
         self.name = name
 
     def __repr__(self):
-        return "<Project {0} (id {1}) for user {2}>".\
+        return "<Project {0} (ID {1}) for user ID {2}>".\
                 format(self.name, self.id, self.user_id)
 
 
@@ -77,5 +77,5 @@ class Spell(Base):
         self.start = datetime.now()
 
     def __repr__(self):
-        return "<Spell from {0} to {1} for project {2}>".\
+        return "<Spell from {0} to {1} for project ID {2}>".\
                 format(self.start, self.end, self.project_id)

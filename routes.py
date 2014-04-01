@@ -5,74 +5,13 @@ from flask import Flask, Response, g, redirect, render_template, request,\
         url_for
 from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
-from flask.ext.mail import Mail, Message
 from sqlalchemy import distinct
 
+from config import app, lm
 from database import session
-from models import User, Project, Spell
 from forms import RegisterForm, LoginForm, SwitchProjectForm, HistoryDateForm
-
-
-# Set application constants, and create application
-DATABASE = "/tmp/timeclock.db"
-# Issue: after development this DEBUG needs to get turned off, for security
-DEBUG = True
-SECRET_KEY = "qmTcssHWNArLzQP9LmBJq7Y4hvdfc4"
-
-app = Flask(__name__)
-app.config.from_object(__name__)
-
-# Configure login manager
-lm = LoginManager()
-lm.init_app(app)
-lm.login_view = "login"
-
-# Configure mail manager
-mail = Mail(app)
-
-# Remove the database session at the end of a request or at shutdown
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    session.remove()
-
-# Allow login manager to load a user from the database
-@lm.user_loader
-def load_user(id):
-    if id is not None:
-        return User.query.get(int(id))
-    else:
-        return None
-
-# Remember the current user
-@app.before_request
-def before_request():
-    g.user = current_user
-
-# Utility function to convert duration objects into human-readable form
-def duration_to_plain_english(duration):
-    duration_mins, duration_secs = divmod(duration.seconds, 60)
-    duration_hours, duration_mins = divmod(duration_mins, 60)
-
-    duration_text = ""
-
-    if duration.days > 0:
-        if duration.days == 1:
-            duration_text += "1 day, "
-        else:
-            duration_text += str(duration.days) + " days, "
-
-    if duration_hours > 0:
-        if duration_hours == 1:
-            duration_text += "1 hour, "
-        else:
-            duration_text += str(duration_hours) + " hours, "
-
-    if duration_mins == 1:
-        duration_text += "1 minute"
-    else:
-        duration_text += str(duration_mins) + " minutes"
-
-    return duration_text
+from models import User, Project, Spell
+from utility import duration_to_plain_english
 
 
 @app.route("/")
@@ -90,16 +29,6 @@ def register():
         session.add(user)
         session.commit()
         login_user(user, remember=True)
-
-        activation_code = user.password[-15:]
-        email_account_confirmation = Message(
-                subject="Confirm Your T.imeclock Account",
-                body="Please confirm your account by clicking on this link:" +\
-                activation_link,
-                sender=("T.imeclock Admin", "miles.w.watkins@gmail.com"),
-                recipients=[form.email.data])
-        mail.send(email_account_confirmation)
-
         return redirect("/")
     return render_template("register.html", form=form)
 
@@ -228,7 +157,7 @@ def history():
 @app.route("/user_complete_history.csv")
 @login_required
 def generate_csv():
-    COLUMNS = ["name", "start", "end"]
+    COLUMNS = ["name", "start", "end", "duration"]
     def generate():
         yield ",".join(COLUMNS) + "\n"
         for project in current_user.projects:
@@ -237,6 +166,7 @@ def generate_csv():
                 attributes.append(spell.project.name)
                 attributes.append(str(spell.start))
                 attributes.append(str(spell.end))
+                attributes.append(str(spell.duration))
                 yield ",".join(attributes) + "\n"
     return Response(generate(), mimetype="txt/csv")
 
