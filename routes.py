@@ -50,6 +50,7 @@ def logout():
     logout_user()
     return redirect("/")
 
+# Issue: times are saved based on the Heroku server's locality, not the user's
 @app.route("/current", methods=["POST", "GET"])
 @login_required
 def current():
@@ -161,15 +162,16 @@ def generate_csv():
     output = StringIO()
     writer = csv.writer(output)
 
-    info = "All T.imeclock user data for {}".format(current_user.email)
+    info = "All T.imeclock user data for {0}, as of {1}".\
+            format(current_user.email, datetime.now())
     writer.writerow([info, "", ""])
     writer.writerow(["", "", ""])
     COLUMNS = ["name", "start", "end"]
     writer.writerow(COLUMNS)
     for project in current_user.projects:
         for spell in project.spells:
-            row = [project.name, spell.start, spell.end]
-            writer.writerow(row)
+            spell_row = [project.name, spell.start, spell.end]
+            writer.writerow(spell_row)
 
     return Response(output.getvalue(), mimetype="txt/csv")
 
