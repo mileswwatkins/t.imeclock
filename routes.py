@@ -1,6 +1,6 @@
 import csv
 from datetime import datetime, date, timedelta
-from io import cStringIO
+from cStringIO import StringIO
 from operator import itemgetter
 
 from flask import Flask, Response, g, redirect, render_template, request,\
@@ -159,7 +159,7 @@ def history():
 @app.route("/user_complete_history.csv")
 @login_required
 def generate_csv():
-    output = cStringIO()
+    output = StringIO()
     writer = csv.writer(output)
 
     COLUMNS = ["name", "start", "end", "duration"]
