@@ -1,4 +1,6 @@
+import csv
 from datetime import datetime, date, timedelta
+from io import cStringIO
 from operator import itemgetter
 
 from flask import Flask, Response, g, redirect, render_template, request,\
@@ -157,24 +159,21 @@ def history():
 @app.route("/user_complete_history.csv")
 @login_required
 def generate_csv():
+    output = cStringIO()
+    writer = csv.writer(output)
+
     COLUMNS = ["name", "start", "end", "duration"]
-    def generate():
-        print("The program at least yields headers")
-        print("The program thinks that the current user is {}".\
-                format(current_user))
-        print(current_user)
-        yield ",".join(COLUMNS) + "\n"
-        for project in current_user.projects:
-            print("The program looks for projects")
-            for spell in project.spells:
-                print("The program looks for spells")
-                attributes = []
-                attributes.append(spell.project.name)
-                attributes.append(str(spell.start))
-                attributes.append(str(spell.end))
-                attributes.append(str(spell.duration))
-                yield ",".join(attributes) + "\n"
-    return Response(generate(), mimetype="txt/csv")
+    writer.writerow(COLUMNS)
+    for project in current_user.projects:
+        for spell in project.spells:
+            writer.writerow(
+                    project.name,
+                    spell.start,
+                    spell.end,
+                    spell.duration
+                    )
+
+    return Response(output.getvalue(), mimetype="txt/csv")
 
 @app.route("/about")
 def about():
