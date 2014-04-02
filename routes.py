@@ -163,14 +163,18 @@ def generate_csv():
     writer = csv.writer(output)
 
     info = "All T.imeclock user data for {0}, as of {1}".\
-            format(current_user.email, datetime.now())
+            format(current_user.email, datetime.now().strftime("%c"))
     writer.writerow([info, "", ""])
     writer.writerow(["", "", ""])
     COLUMNS = ["name", "start", "end"]
     writer.writerow(COLUMNS)
     for project in current_user.projects:
         for spell in project.spells:
-            spell_row = [project.name, spell.start, spell.end]
+            spell_row = [
+                    project.name,
+                    spell.start.strftime("%c"),
+                    spell.end.strftime("%c")
+                    ]
             writer.writerow(spell_row)
 
     return Response(output.getvalue(), mimetype="txt/csv")
