@@ -161,19 +161,24 @@ def history():
 def generate_csv():
     output = StringIO()
     writer = csv.writer(output)
+    DATE_FORMAT = "%c"
 
     info = "All T.imeclock user data for {0}, as of {1}".\
-            format(current_user.email, datetime.now().strftime("%c"))
+            format(current_user.email, datetime.now().strftime(DATE_FORMAT))
     writer.writerow([info, "", ""])
     writer.writerow(["", "", ""])
     COLUMNS = ["name", "start", "end"]
     writer.writerow(COLUMNS)
     for project in current_user.projects:
         for spell in project.spells:
+            # Resolve issues with null end times, for ongoing spells
+            end_time = ""
+            if spell.end:
+                end_time = spell.end.strftime(DATE_FORMAT)
             spell_row = [
                     project.name,
-                    spell.start.strftime("%c"),
-                    spell.end.strftime("%c")
+                    spell.start.strftime(DATE_FORMAT),
+                    end_time
                     ]
             writer.writerow(spell_row)
 
