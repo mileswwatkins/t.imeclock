@@ -161,6 +161,9 @@ def generate_csv():
     output = StringIO()
     writer = csv.writer(output)
 
+    info = "All T.imeclock user data for {}".format(current_user.email)
+    writer.writerow([info, "", ""])
+    writer.writerow(["", "", ""])
     COLUMNS = ["name", "start", "end"]
     writer.writerow(COLUMNS)
     for project in current_user.projects:
