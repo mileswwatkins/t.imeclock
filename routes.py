@@ -159,8 +159,8 @@ def history():
 def generate_csv():
     COLUMNS = ["name", "start", "end", "duration"]
     def generate():
-        yield ",".join(COLUMNS) + "\n"
-        print("The program at least prints headers")
+        # yield ",".join(COLUMNS) + "\n"
+        print("The program at least yields headers")
         for project in current_user.projects:
             print("The program looks for projects")
             for spell in project.spells:
