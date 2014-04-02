@@ -166,12 +166,14 @@ def generate_csv():
     writer.writerow(COLUMNS)
     for project in current_user.projects:
         for spell in project.spells:
-            writer.writerow(
+            row = [
                     project.name,
                     spell.start,
                     spell.end,
                     spell.duration
-                    )
+                    ]
+            writer.writerow(row)
+                    
 
     return Response(output.getvalue(), mimetype="txt/csv")
 
