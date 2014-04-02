@@ -163,6 +163,7 @@ def generate_csv():
         print("The program at least yields headers")
         print("The program thinks that the current user is {}".\
                 format(current_user))
+        print(current_user)
         for project in current_user.projects:
             print("The program looks for projects")
             for spell in project.spells:
