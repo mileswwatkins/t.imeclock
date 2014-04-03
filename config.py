@@ -1,5 +1,7 @@
-from flask import Flask, g
+from flask import Flask, g, request
 from flask.ext.login import LoginManager, current_user
+
+from timezones.tzutils import guess_timezone_by_ip
 
 from database import session
 from models import User
@@ -36,3 +38,4 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user
+    user_timezone = guess_timezone_by_ip(request.remote_addr)

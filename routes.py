@@ -50,7 +50,6 @@ def logout():
     logout_user()
     return redirect("/")
 
-# Issue: times are saved based on the Heroku server's locality, not the user's
 @app.route("/current", methods=["POST", "GET"])
 @login_required
 def current():
@@ -72,7 +71,7 @@ def current():
 
     # If the user is currently working, they have an option to stop working
     if request.form.get("button") == "... or stop working":
-        current_spell.end = datetime.now()
+        current_spell.end = datetime.now(user_timezone)
         # Add this project to the form selection drop-down
         form.existing_project.choices.append(
                 (current_spell.project_id, current_spell.project.name))
@@ -82,7 +81,7 @@ def current():
     elif form.validate_on_submit():
         # Close the current project, if one exists
         if current_spell:
-            current_spell.end = datetime.now()
+            current_spell.end = datetime.now(user_timezone)
             form.existing_project.choices.append(
                     (current_spell.project_id, current_spell.project.name))
 
@@ -90,7 +89,8 @@ def current():
         if form.new_project.data:
             current_project = Project(
                     user_id=current_user.id, 
-                    name=form.new_project.data)
+                    name=form.new_project.data
+                    )
             # Add this to the projects table
             session.add(current_project)
             session.flush()
@@ -105,7 +105,10 @@ def current():
                     (current_project.id, current_project.name))
 
         # Create a new database record for that project name
-        current_spell = Spell(project_id=current_project.id)
+        current_spell = Spell(
+                project_id=current_project.id,
+                start=datetime.now(user_timezone)
+                )
         session.add(current_spell)
 
         session.commit()
@@ -137,7 +140,7 @@ def history():
                 # Make a special case for the currently-ongoing project
                 if spell.end == None:
                     if start_date <= spell.start.date() <= \
-                            date.today() <= end_date:
+                            datetime.now(user_timezone).date <= end_date:
                         durations[project.name] += spell.duration
                 else:
                     if start_date <= spell.start.date() <= \
@@ -163,8 +166,10 @@ def generate_csv():
     writer = csv.writer(output)
     DATE_FORMAT = "%c"
 
-    header_info = "All T.imeclock user data for {0}, as of {1}".\
-            format(current_user.email, datetime.now().strftime(DATE_FORMAT))
+    header_info = "All T.imeclock user data for {0}, as of {1}".format(
+            current_user.email,
+            datetime.now(user_timezone).strftime(DATE_FORMAT)
+            )
     writer.writerow([header_info, "", ""])
     writer.writerow(["", "", ""])
     COLUMNS = ["name", "start", "end"]

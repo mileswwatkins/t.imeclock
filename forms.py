@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import re
 
 from flask.ext.login import current_user
@@ -63,5 +63,5 @@ class SwitchProjectForm(Form):
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
-    start_date = DateField("Start Date", default=date(2014, 1, 1))
-    end_date = DateField("End Date", default=date.today())
+    start_date = DateField("Start Date", default=date(date.today().year, 1, 1))
+    end_date = DateField("End Date", default=date.today() + timedelta(1))

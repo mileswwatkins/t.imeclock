@@ -66,15 +66,19 @@ class Spell(Base):
 
     @hybrid_property
     def duration(self):
+        # Deal with ongoing spells
         if self.end:
-            return self.end - self.start
+            # Mitigate time zone edge cases, where a duration could be negative
+            if self.end > self.start:
+                return self.end - self.start
+            else:
+                return timedelta(0)
         else:
             return datetime.now() - self.start
     
-    def __init__(self, project_id):
+    def __init__(self, project_id, start):
         self.project_id = project_id
-        # Assign start time based on when the spell is initialized
-        self.start = datetime.now()
+        self.start = start
 
     def __repr__(self):
         return "<Spell from {0} to {1} for project ID {2}>".\
