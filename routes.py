@@ -163,9 +163,9 @@ def generate_csv():
     writer = csv.writer(output)
     DATE_FORMAT = "%c"
 
-    info = "All T.imeclock user data for {0}, as of {1}".\
+    header_info = "All T.imeclock user data for {0}, as of {1}".\
             format(current_user.email, datetime.now().strftime(DATE_FORMAT))
-    writer.writerow([info, "", ""])
+    writer.writerow([header_info, "", ""])
     writer.writerow(["", "", ""])
     COLUMNS = ["name", "start", "end"]
     writer.writerow(COLUMNS)
