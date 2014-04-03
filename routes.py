@@ -170,7 +170,7 @@ def generate_csv():
     writer = csv.writer(output)
     DATE_FORMAT = "%c"
 
-    header_info = "All T.imeclock user data for {0}, as of {1}".format(
+    header_info = "All T.imeclock data for {0}, as of {1}".format(
             current_user.email,
             datetime.now(user_timezone).strftime(DATE_FORMAT)
             )
