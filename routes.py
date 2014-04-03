@@ -143,7 +143,7 @@ def history():
                 # Make a special case for the currently-ongoing project
                 if spell.end == None:
                     if start_date <= spell.start.date() <= \
-                            datetime.now(user_timezone).date <= end_date:
+                            datetime.now(user_timezone).date() <= end_date:
                         durations[project.name] += spell.duration
                 else:
                     if start_date <= spell.start.date() <= \
