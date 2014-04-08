@@ -1,5 +1,6 @@
 from flask import Flask, g, request
 from flask.ext.login import LoginManager, current_user
+from timezones import tz_utils
 
 from database import session
 from models import User
@@ -18,6 +19,9 @@ app.config.from_object(__name__)
 lm = LoginManager()
 lm.init_app(app)
 lm.login_view = "login"
+
+# Identify the geographic IP lookup database
+tz_utils.GEOIP_DATA_LOCATION = "/static/geo_ip/GeoLiteCity.dat"
 
 # Remove the database session at the end of a request or at shutdown
 @app.teardown_appcontext
