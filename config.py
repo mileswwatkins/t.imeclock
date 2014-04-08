@@ -22,6 +22,7 @@ lm.login_view = "login"
 
 # Identify the geographic IP lookup database
 tz_utils.GEOIP_DATA_LOCATION = "/static/geo_ip/GeoLiteCity.dat"
+guess_timezone_by_ip = tz_utils.guess_timezone_by_ip
 
 # Remove the database session at the end of a request or at shutdown
 @app.teardown_appcontext

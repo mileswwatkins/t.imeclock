@@ -9,7 +9,7 @@ from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
 from sqlalchemy import distinct
 
-from config import app, lm, tz_utils
+from config import app, lm, guess_timezone_by_ip
 from database import session
 from forms import RegisterForm, LoginForm, SwitchProjectForm, HistoryDateForm
 from models import User, Project, Spell
@@ -54,7 +54,7 @@ def logout():
 @login_required
 def current():
     form = SwitchProjectForm()
-    user_timezone = tz_utils.guess_timezone_by_ip(request.remote_addr)
+    user_timezone = guess_timezone_by_ip(request.remote_addr)
     current_spell = Spell.query.\
             filter(Spell.end == None).\
             join(Project).join(User).filter(User.id == current_user.id).\
