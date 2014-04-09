@@ -127,7 +127,7 @@ def current():
 def history():
     form = HistoryDateForm()
     user_timezone = guess_timezone_by_ip(request.remote_addr)
-    print("user IP: {}".format(request.remoate_addr))
+    print("user IP: {}".format(request.remote_addr))
     print("user timezone: {}".format(user_timezone))
     sorted_durations = []
 
