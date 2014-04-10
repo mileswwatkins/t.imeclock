@@ -1,4 +1,4 @@
-from flask import Flask, g, request
+from flask import Flask, Request, g, request
 from flask.ext.login import LoginManager, current_user
 from timezones import tz_utils
 
@@ -41,3 +41,21 @@ def load_user(id):
 @app.before_request
 def before_request():
     g.user = current_user
+
+# Replace the remote_addr property so that it returns a non-proxy IP
+class HerokuRequest(Request):
+    @property
+    def remote_addr(self):
+        forwarded_for = self.environ.get("HTTP_X_FORWARDED_FOR", None)
+        if forwarded_for:
+            # If the object contains multiple addresses, the actual IP is first
+            if "," in forwarded_for:
+                return fwd.split(",")[0]
+            else:
+                return forwarded_for
+        # Otherwise, return the default value
+        else:
+            return self.environ.get("REMOTE_ADDR")
+
+# Use the HerokuRequest class so that the actual IPs are retrieved
+app.request_class = HerokuRequest
