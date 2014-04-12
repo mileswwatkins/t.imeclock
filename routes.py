@@ -54,7 +54,7 @@ def logout():
 @login_required
 def current():
     form = SwitchProjectForm()
-    user_timezone = guess_timezone_by_ip(request.remote_addr)
+    user_timezone = guess_timezone_by_ip(request.remote_addr, only_name=True)
     current_spell = Spell.query.\
             filter(Spell.end == None).\
             join(Project).join(User).filter(User.id == current_user.id).\
@@ -126,9 +126,7 @@ def current():
 @login_required
 def history():
     form = HistoryDateForm()
-    user_timezone = guess_timezone_by_ip(request.remote_addr)
-    print("user IP: {}".format(request.remote_addr))
-    print("user timezone: {}".format(user_timezone))
+    user_timezone = guess_timezone_by_ip(request.remote_addr, only_name=True)
     sorted_durations = []
 
     if form.validate_on_submit():
@@ -166,7 +164,7 @@ def history():
 @app.route("/user_complete_history.csv")
 @login_required
 def generate_csv():
-    user_timezone = guess_timezone_by_ip(request.remote_addr)
+    user_timezone = guess_timezone_by_ip(request.remote_addr, only_name=True)
     output = StringIO()
     writer = csv.writer(output)
     DATE_FORMAT = "%c"
