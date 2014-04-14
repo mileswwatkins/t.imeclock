@@ -77,7 +77,7 @@ def current():
 
     # If the user is currently working, they have an option to stop working
     if request.form.get("button") == "... or stop working":
-        current_spell.end = datetime.now(user_timezone)
+        current_spell.end = datetime.now(user_timezone).replace(tzinfo=None)
         # Add this project to the form selection drop-down
         form.existing_project.choices.append(
                 (current_spell.project_id, current_spell.project.name))
@@ -87,7 +87,8 @@ def current():
     elif form.validate_on_submit():
         # Close the current project, if one exists
         if current_spell:
-            current_spell.end = datetime.now(user_timezone)
+            current_spell.end = datetime.now(user_timezone).\
+                    replace(tzinfo=None)
             form.existing_project.choices.append(
                     (current_spell.project_id, current_spell.project.name))
 
@@ -113,7 +114,7 @@ def current():
         # Create a new database record for that project name
         current_spell = Spell(
                 project_id=current_project.id,
-                start=datetime.now(user_timezone)
+                start=datetime.now(user_timezone).replace(tzinfo=None)
                 )
         session.add(current_spell)
 
@@ -136,7 +137,6 @@ def history():
             only_name=True
             )
     user_timezone = timezone(user_timezone_name)
-    print(user_timezone_name, user_timezone)
     sorted_durations = []
 
     if form.validate_on_submit():
