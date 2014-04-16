@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta
 import re
 
+from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
 from wtforms import PasswordField, SelectField, TextField
