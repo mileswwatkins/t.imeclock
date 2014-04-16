@@ -126,8 +126,9 @@ def current():
 @app.route("/history", methods=["POST", "GET"])
 @login_required
 def history():
-    form = HistoryDateForm()
     user_timezone = guess_user_timezone(request.remote_addr)
+    today = datetime.now(user_timezone).date()
+    form = HistoryDateForm(today=today)
     sorted_durations = []
 
     if form.validate_on_submit():
@@ -142,8 +143,7 @@ def history():
             for spell in project.spells:
                 # Make a special case for the currently-ongoing project
                 if spell.end == None:
-                    if start_date <= spell.start.date() <= \
-                            datetime.now(user_timezone).date() <= end_date:
+                    if start_date <= spell.start.date() <= today <= end_date:
                         durations[project.name] += spell.duration
                 else:
                     if start_date <= spell.start.date() <= \
