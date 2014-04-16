@@ -7,14 +7,13 @@ from flask import Flask, Response, g, redirect, render_template, request,\
         url_for
 from flask.ext.login import LoginManager, current_user, login_required,\
         login_user, logout_user
-from pytz import timezone
 from sqlalchemy import distinct
 
-from config import app, lm, guess_timezone_by_ip
+from config import app, lm
 from database import session
 from forms import RegisterForm, LoginForm, SwitchProjectForm, HistoryDateForm
 from models import User, Project, Spell
-from utility import duration_to_plain_english
+from utility import duration_to_plain_english, guess_user_timezone
 
 
 @app.route("/")
@@ -55,11 +54,7 @@ def logout():
 @login_required
 def current():
     form = SwitchProjectForm()
-    user_timezone_name = guess_timezone_by_ip(
-            ip=request.remote_addr,
-            only_name=True
-            )
-    user_timezone = timezone(user_timezone_name)
+    user_timezone = guess_user_timezone(request.remote_addr)
     current_spell = Spell.query.\
             filter(Spell.end == None).\
             join(Project).join(User).filter(User.id == current_user.id).\
@@ -132,11 +127,7 @@ def current():
 @login_required
 def history():
     form = HistoryDateForm()
-    user_timezone_name = guess_timezone_by_ip(
-            ip=request.remote_addr,
-            only_name=True
-            )
-    user_timezone = timezone(user_timezone_name)
+    user_timezone = guess_user_timezone(request.remote_addr)
     sorted_durations = []
 
     if form.validate_on_submit():
@@ -174,11 +165,7 @@ def history():
 @app.route("/user_complete_history.csv")
 @login_required
 def generate_csv():
-    user_timezone_name = guess_timezone_by_ip(
-            ip=request.remote_addr,
-            only_name=True
-            )
-    user_timezone = timezone(user_timezone_name)
+    user_timezone = guess_user_timezone(request.remote_addr)
     output = StringIO()
     writer = csv.writer(output)
     DATE_FORMAT = "%c"
