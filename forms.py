@@ -66,5 +66,5 @@ class HistoryDateForm(Form):
     def __init__(self, today):
         self.today = today
     
-    start_date = DateField("Start Date", default=self.today)
-    end_date = DateField("End Date", default=self.today)
+    start_date = DateField("Start Date", default=today)
+    end_date = DateField("End Date", default=today)
