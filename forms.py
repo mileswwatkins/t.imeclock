@@ -1,5 +1,7 @@
+from datetime import datetime
 import re
 
+from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
 from wtforms import PasswordField, SelectField, TextField
@@ -9,6 +11,7 @@ from wtforms.ext.dateutil.fields import DateField
 
 from database import session
 from models import User, Project
+from utility import guess_user_timezone
 
 
 # Validator to prevent the re-use of an email address during registration
@@ -63,8 +66,8 @@ class SwitchProjectForm(Form):
 # Create a form to select start and end dates for the history view
 # Default to showing information for the current day for the user's timezone
 class HistoryDateForm(Form):
-    def __init__(self, today):
-        self.today = today
-    
+    user_timezone = guess_user_timezone(request.remote_addr)
+    today = datetime.now(user_timezone).date()
+
     start_date = DateField("Start Date", default=today)
     end_date = DateField("End Date", default=today)
