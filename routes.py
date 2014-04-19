@@ -5,8 +5,8 @@ from operator import itemgetter
 
 from flask import Flask, Response, g, redirect, render_template, request,\
         url_for
-from flask.ext.login import LoginManager, current_user, login_required,\
-        login_user, logout_user
+from flask.ext.login import current_user, login_required, login_user,\
+        logout_user
 from sqlalchemy import distinct
 
 from config import app, lm

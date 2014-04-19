@@ -1,16 +1,18 @@
-from datetime import datetime
+from datetime import date
 import re
 
 from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
+from sqlalchemy import func
 from wtforms import PasswordField, SelectField, TextField
 from wtforms.validators import Email, EqualTo, Length, Required,\
         ValidationError
 from wtforms.ext.dateutil.fields import DateField
 
+from config import app
 from database import session
-from models import User, Project
+from models import User, Project, Spell
 from utility import guess_user_timezone
 
 
@@ -64,10 +66,23 @@ class SwitchProjectForm(Form):
             validate_project_not_in_use])
 
 # Create a form to select start and end dates for the history view
-# Default to showing information for the current day for the user's timezone
 class HistoryDateForm(Form):
-    user_timezone = guess_user_timezone(request.remote_addr)
-    today = datetime.now(user_timezone).date()
+    with app.app_context():
+        current_spell = Spell.query.\
+                filter(Spell.end == None).\
+                join(Project).join(User).filter(User.id == current_user.id).\
+                first()
+        most_recent_end = session.query(func.max(Spell.end)).\
+                join(Project).join(User).filter(User.id == current_user.id)
 
-    start_date = DateField("Start Date", default=today)
-    end_date = DateField("End Date", default=today)
+    # Default to showing information for the most recent day of work on record
+    if current_spell:
+        most_recent_day = current_spell.start.date()
+    elif latest_finished_spell:
+        most_recent_day = most_recent_end
+    # If the user has no data, then just show the server's current date
+    else:
+        most_recent_day = date.today()
+
+    start_date = DateField("Start Date", default=most_recent_day)
+    end_date = DateField("End Date", default=most_recent_day)
