@@ -77,6 +77,7 @@ def current():
         form.existing_project.choices.append(
                 (current_spell.project_id, current_spell.project.name))
         current_spell = None
+        session.commit()
 
     # Otherwise, the user can choose a new or existing project to work on
     elif form.validate_on_submit():
