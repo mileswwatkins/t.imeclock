@@ -63,11 +63,13 @@ def current():
     # Generate a list of existing projectjects from which user can choose
     DEFAULT_CHOICE_NO_PROJECT = (0, "")
     form_choices = [DEFAULT_CHOICE_NO_PROJECT]
-    if current_spell:
-        for project in current_user.projects:
-            # Remove current project from the set of choices
-            if project != current_spell.project:
-                form_choices.append((project.id, project.name))
+    for project in current_user.projects:
+        form_choices.append((project.id, project.name))
+        # Remove current project, if any, from the set of choices
+        if current_spell:
+            if current_spell.project == project:
+                form_choices.remove(project.id, project.name)
+            
     form.existing_project.choices = form_choices
 
     # If the user is currently working, they have an option to stop working
