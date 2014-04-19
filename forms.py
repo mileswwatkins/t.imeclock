@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 import re
 
 from flask import request
@@ -67,22 +67,7 @@ class SwitchProjectForm(Form):
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
-    with app.app_context():
-        current_spell = Spell.query.\
-                filter(Spell.end == None).\
-                join(Project).join(User).filter(User.id == current_user.id).\
-                first()
-        most_recent_end = session.query(func.max(Spell.end)).\
-                join(Project).join(User).filter(User.id == current_user.id)
-
-    # Default to showing information for the most recent day of work on record
-    if current_spell:
-        most_recent_day = current_spell.start.date()
-    elif latest_finished_spell:
-        most_recent_day = most_recent_end
-    # If the user has no data, then just show the server's current date
-    else:
-        most_recent_day = date.today()
-
-    start_date = DateField("Start Date", default=most_recent_day)
-    end_date = DateField("End Date", default=most_recent_day)
+    # Due to request context issues, cannot access the user's timezone
+    default_date = datetime.now(None).today()
+    start_date = DateField("Start Date", default=default_date)
+    end_date = DateField("End Date", default=default_date)
