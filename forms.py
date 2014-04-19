@@ -5,7 +5,7 @@ from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
 from sqlalchemy import func
-from wtforms import PasswordField, SelectField, TextField
+from wtforms import PasswordField, Regexp, SelectField, TextField
 from wtforms.validators import Email, EqualTo, Length, Required,\
         ValidationError
 from wtforms.ext.dateutil.fields import DateField
@@ -22,7 +22,7 @@ def validate_user_not_in_use(form, field):
     if email_in_use:
         raise ValidationError("That email address already has an account")
 
-# Validator to prevent the re-use of an email address during registration
+# Validator to prevent the re-use of a project name during registration
 def validate_project_not_in_use(form, field):
     project_in_use = Project.query.\
             filter(Project.name == field.data).\
@@ -63,7 +63,8 @@ class SwitchProjectForm(Form):
     existing_project = SelectField("Existing Project", coerce=int)
     new_project = TextField("New Project Name", validators=[
             validate_exactly_one_field_used,
-            validate_project_not_in_use])
+            validate_project_not_in_use,
+            Regexp(regex="[\S]*", message="Name must not just be whitespace")])
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
