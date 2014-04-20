@@ -60,11 +60,14 @@ class SwitchProjectForm(Form):
         elif not self.existing_project.data and not self.new_project.data:
             raise ValidationError(message)
 
+    pattern_forbidding_extra_spaces = "^(\S+(\s\S+)*)*$"
+
     existing_project = SelectField("Existing Project", coerce=int)
     new_project = TextField("New Project Name", validators=[
             validate_exactly_one_field_used,
             validate_project_not_in_use,
-            Regexp(regex="[\S]+", message="Name must not just be whitespace")])
+            Regexp(regex=pattern_forbidding_extra_spaces,
+            message="No extra spaces are allowed in project names")])
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
