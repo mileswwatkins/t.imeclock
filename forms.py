@@ -64,7 +64,7 @@ class SwitchProjectForm(Form):
     new_project = TextField("New Project Name", validators=[
             validate_exactly_one_field_used,
             validate_project_not_in_use,
-            Regexp(regex="[\S]*", message="Name must not just be whitespace")])
+            Regexp(regex="[\S]+", message="Name must not just be whitespace")])
 
 # Create a form to select start and end dates for the history view
 class HistoryDateForm(Form):
