@@ -68,7 +68,7 @@ def current():
         # Remove current project, if any, from the set of choices
         if current_spell:
             if current_spell.project == project:
-                form_choices.remove(project.id, project.name)
+                form_choices.remove((project.id, project.name))
             
     form.existing_project.choices = form_choices
 
