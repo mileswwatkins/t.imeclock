@@ -5,8 +5,8 @@ from flask import request
 from flask.ext.login import current_user
 from flask_wtf import Form
 from sqlalchemy import func
-from wtforms import PasswordField, Regexp, SelectField, TextField
-from wtforms.validators import Email, EqualTo, Length, Required,\
+from wtforms import PasswordField, SelectField, TextField
+from wtforms.validators import Email, EqualTo, Length, Regexp, Required,\
         ValidationError
 from wtforms.ext.dateutil.fields import DateField
 
