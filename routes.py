@@ -152,9 +152,13 @@ def history():
                     if start_date <= spell.start.date() <= \
                             spell.end.date() <= end_date:
                         durations[project.name] += spell.duration
-            # Convert summed durations to plain English
-            durations[project.name] = \
-                    duration_to_plain_english(durations[project.name])
+            # If there is no time spent on the project, then remove it
+            if durations[project.name] == timedelta(0):
+                del durations[project.name]
+            # Otherwise, convert the summed durations to plain English
+            else:
+                durations[project.name] = \
+                        duration_to_plain_english(durations[project.name])
 
         # Sort output alphabetically by project name
         sorted_durations = sorted(durations.iteritems(), key=itemgetter(0))
