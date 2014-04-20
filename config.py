@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, Request, g, request
 from flask.ext.login import LoginManager, current_user
 
@@ -5,11 +7,10 @@ from database import session
 from models import User
 
 
-# Set application constants, and create application
+# Set application constants, and create the application
 DATABASE = "/tmp/timeclock.db"
-# Issue: after development this DEBUG needs to get turned off, for security
-DEBUG = True
-SECRET_KEY = "qmTcssHWNArLzQP9LmBJq7Y4hvdfc4"
+DEBUG = False
+SECRET_KEY = str(os.getenv("APP_SECRET_KEY", "local_development"))
 
 app = Flask(__name__)
 app.config.from_object(__name__)
